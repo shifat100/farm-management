@@ -1,0 +1,94 @@
+/* Windows Fluent-style UI Layout Definitions */
+:root {
+    --win-bg: #f3f3f3;
+    --win-card: #ffffff;
+    --win-border: #e5e5e5;
+    --win-text: #202020;
+    --win-primary: #0078d4;
+    --win-primary-hover: #106ebe;
+}
+
+[data-bs-theme="dark"] {
+    --win-bg: #202020;
+    --win-card: #2d2d2d;
+    --win-border: #444444;
+    --win-text: #f5f5f5;
+    --win-primary: #60cdff;
+    --win-primary-hover: #47b2e7;
+}
+
+body {
+    background-color: var(--win-bg);
+    color: var(--win-text);
+    font-family: "Segoe UI", -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
+    font-size: 14px;
+    transition: background-color 0.15s ease, color 0.15s ease;
+}
+
+/* modern card layout structures */
+.card {
+    background-color: var(--win-card);
+    border: 1px solid var(--win-border);
+    border-radius: 4px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.04);
+    transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.card-header {
+    background-color: transparent;
+    border-bottom: 1px solid var(--win-border);
+    font-weight: 600;
+}
+
+.table {
+    color: var(--win-text);
+}
+
+.table-hover tbody tr:hover {
+    background-color: rgba(0, 120, 212, 0.05);
+}
+
+.offcanvas {
+    background-color: var(--win-card);
+    color: var(--win-text);
+}
+
+.bg-light {
+    background-color: var(--win-bg) !important;
+}
+
+.nav-link {
+    border-left: 3px solid transparent;
+}
+
+.nav-link.active {
+    border-left-color: var(--win-primary) !important;
+    background-color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* Printer styling layout optimizations for direct PDF compilation */
+@media print {
+    body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+    }
+    #sidebar, .navbar, .btn, .offcanvas, #darkModeToggle, button {
+        display: none !important;
+    }
+    #wrapper {
+        display: block !important;
+    }
+    .card {
+        border: 1px solid #cccccc !important;
+        box-shadow: none !important;
+        page-break-inside: avoid;
+    }
+    .table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+    }
+    .table th, .table td {
+        border: 1px solid #dddddd !important;
+        padding: 8px !important;
+    }
+}
