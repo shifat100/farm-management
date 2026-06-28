@@ -5,7 +5,13 @@ require_once 'auth.php';
 header('Content-Type: application/json');
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Dismiss specific alert item safely [1]
+    // CSRF Validation (AJAX-এর জন্যও)
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Invalid security token.']);
+        exit;
+    }
+
     if (isset($_POST['mark_read'])) {
         $id = (int)($_POST['id'] ?? 0);
         $stmt = $pdo->prepare("UPDATE alerts SET is_read = 1 WHERE id = ?");
@@ -14,7 +20,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
     
-    // Dismiss all unread notifications globally [1]
     if (isset($_POST['mark_all'])) {
         $pdo->query("UPDATE alerts SET is_read = 1 WHERE is_read = 0");
         echo json_encode(['success' => true]);

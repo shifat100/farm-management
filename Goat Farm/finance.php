@@ -1,30 +1,34 @@
 <?php
 require_once 'functions.php';
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['trans_action'])) {
-    $animal_id = $_POST['animal_id'] !== '' ? (int)$_POST['animal_id'] : null;
-    $type = $_POST['type'] ?? 'Expense';
-    $category = $_POST['category'] ?? 'Other';
-    $amount = (float)$_POST['amount'];
-    $date = $_POST['trans_date'] ?? date('Y-m-d');
-    $description = $_POST['description'] ?? '';
-    
-    // Secure Parameterized Statement Insertion [1]
-    $pdo->prepare("INSERT INTO transactions (animal_id, type, category, amount, trans_date, description) VALUES (?,?,?,?,?,?)")
-        ->execute([$animal_id, $type, $category, $amount, $date, $description]);
-        
-    if ($type === 'Expense' && $animal_id) {
-        $pdo->prepare("INSERT INTO animal_costs (animal_id, category, amount, cost_date, note) VALUES (?,?,?,?,?)")
-            ->execute([$animal_id, $category, $amount, $date, $description]);
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF Validation
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        die("<div class='alert alert-danger'>Invalid security token. Please refresh the page and try again.</div>");
     }
-    echo "<div class='alert alert-success'>Transaction logged securely.</div>";
+
+    if (isset($_POST['trans_action'])) {
+        $animal_id = $_POST['animal_id'] !== '' ? (int)$_POST['animal_id'] : null;
+        $type = $_POST['type'] ?? 'Expense';
+        $category = $_POST['category'] ?? 'Other';
+        $amount = (float)$_POST['amount'];
+        $date = $_POST['trans_date'] ?? date('Y-m-d');
+        $description = $_POST['description'] ?? '';
+        
+        $pdo->prepare("INSERT INTO transactions (animal_id, type, category, amount, trans_date, description) VALUES (?,?,?,?,?,?)")
+            ->execute([$animal_id, $type, $category, $amount, $date, $description]);
+            
+        if ($type === 'Expense' && $animal_id) {
+            $pdo->prepare("INSERT INTO animal_costs (animal_id, category, amount, cost_date, note) VALUES (?,?,?,?,?)")
+                ->execute([$animal_id, $category, $amount, $date, $description]);
+        }
+        echo "<div class='alert alert-success'>Transaction logged securely.</div>";
+    }
 }
 
-// Global Filter integration [1]
 $filters = $_GET;
 $filter = buildFilterWhere($filters, 'a');
 
-// Retrieve dynamic transactions list matching global variables [1]
 $sql_t = "SELECT t.*, a.name as animal, a.auto_id 
           FROM transactions t 
           LEFT JOIN animals a ON t.animal_id = a.id 
@@ -34,7 +38,6 @@ $stmt_t = $pdo->prepare($sql_t);
 $stmt_t->execute($filter['params']);
 $transactions = $stmt_t->fetchAll();
 
-// Dynamic computation of active filters for ledger balance sheets [1]
 $sql_inc_tot = "SELECT COALESCE(SUM(t.amount),0.00) FROM transactions t LEFT JOIN animals a ON t.animal_id = a.id {$filter['clause']}" . ($filter['clause'] ? " AND " : " WHERE ") . "t.type='Income'";
 $sql_exp_tot = "SELECT COALESCE(SUM(t.amount),0.00) FROM transactions t LEFT JOIN animals a ON t.animal_id = a.id {$filter['clause']}" . ($filter['clause'] ? " AND " : " WHERE ") . "t.type='Expense'";
 
@@ -42,7 +45,6 @@ $stmt_it = $pdo->prepare($sql_inc_tot); $stmt_it->execute($filter['params']); $i
 $stmt_et = $pdo->prepare($sql_exp_tot); $stmt_et->execute($filter['params']); $expense = $stmt_et->fetchColumn();
 $capital = $income - $expense;
 
-// Monthly chart aggregate queries
 $monthly = $pdo->query("SELECT DATE_FORMAT(trans_date,'%Y-%m') m, SUM(IF(type='Income',amount,0)) inc, SUM(IF(type='Expense',amount,0)) exp FROM transactions GROUP BY m ORDER BY m")->fetchAll();
 ?>
 
@@ -91,6 +93,7 @@ $monthly = $pdo->query("SELECT DATE_FORMAT(trans_date,'%Y-%m') m, SUM(IF(type='I
         <div class="modal-header"><h5>Post Ledger Log Transaction</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
         <div class="modal-body">
             <input type="hidden" name="trans_action" value="1">
+            <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
             <div class="mb-2">
                 <label class="form-label small">Transaction Directional Flow</label>
                 <select name="type" class="form-select">

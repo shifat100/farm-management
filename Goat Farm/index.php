@@ -1,36 +1,50 @@
 <?php
+$is_post = ($_SERVER['REQUEST_METHOD'] === 'POST');
 $output = "";
-$show_modal = false;
+$show_modal = false; // ডিফল্ট false – পেজ লোড হলে মডাল খোলে না
 
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+if ($is_post) {
     if (isset($_POST['action'])) {
         $action = $_POST['action'];
         switch ($action) {
             case 'reboot':
-                $output = "System is rebooting...";
+                $output = "System is rebooting... Please wait.";
                 $show_modal = true;
-                shell_exec("sudo reboot");
+                // ব্যাকগ্রাউন্ডে রান করা হচ্ছে যাতে ব্রাউজার রেসপন্স পাঠানোর সময় পায়
+                shell_exec("sudo reboot > /dev/null 2>&1 &");
                 break;
             case 'shutdown':
-                $output = "System is shutting down...";
+                $output = "System is shutting down... Connection closing.";
                 $show_modal = true;
-                shell_exec("sudo poweroff");
+                shell_exec("sudo poweroff > /dev/null 2>&1 &");
                 break;
             case 'filemanager':
                 shell_exec("export DISPLAY=:0; sudo pcmanfm > /dev/null 2>&1 &");
                 $output = "File Manager launched on screen.";
+                $show_modal = true;
                 break;
             case 'terminal':
                 shell_exec("export DISPLAY=:0; sudo lxterminal > /dev/null 2>&1 &");
                 $output = "LXTerminal launched on screen.";
+                $show_modal = true;
                 break;
         }
     } elseif (isset($_POST['custom_command'])) {
         $cmd = trim($_POST['custom_command']);
         if (!empty($cmd)) {
+            /* 
+               নিরাপত্তা সতর্কতা: shell_exec-এ সরাসরি ইউজার ইনপুট দেওয়া ঝুঁকিপূর্ণ।
+               নিশ্চিত করুন এই ড্যাশবোর্ডটি যেন কোনো পাবলিক আইপি বা ইন্টারনেটে সরাসরি উন্মুক্ত না থাকে।
+               শুধুমাত্র লোকাল নেটওয়ার্কে (LAN) এটি ব্যবহার করা নিরাপদ।
+            */
             $output = shell_exec("sudo " . $cmd . " 2>&1");
-            $show_modal = true;
+            if (empty($output)) {
+                $output = "Command executed successfully (no output returned).";
+            }
+        } else {
+            $output = "Error: Command cannot be empty.";
         }
+        $show_modal = true;
     }
 }
 ?>
@@ -38,364 +52,633 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
     <title>Goat OS - Smart Farm Dashboard</title>
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <style>
-        :root {
-            --bg-gradient: radial-gradient(circle, #1e293b 0%, #0f172a 100%);
-            --taskbar-bg: rgba(15, 23, 42, 0.85);
-            --icon-hover: rgba(255, 255, 255, 0.1);
-            --modal-bg: #1e293b;
-            --text-color: #f1f5f9;
-        }
-
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: var(--bg-gradient);
-            color: var(--text-color);
+        /* ===== গ্লোবাল রিসেট ===== */
+        * {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            box-sizing: border-box;
+        }
+        html, body {
+            height: 100%;
+            height: 100dvh;
+            font-family: 'Inter', sans-serif;
+            background: #0b0e17;
+            color: #f0f4ff;
             overflow: hidden;
+        }
+
+        /* ===== স্প্ল্যাশ স্ক্রিন ===== */
+        #splash-screen {
+            position: fixed;
+            inset: 0;
+            z-index: 9999;
+            background: linear-gradient(145deg, #0b0e17 0%, #1a1f2e 100%);
             display: flex;
             flex-direction: column;
-            user-select: none;
+            align-items: center;
+            justify-content: center;
+            transition: opacity 0.8s ease, visibility 0.8s ease;
+            padding: 20px;
+            padding-bottom: env(safe-area-inset-bottom, 20px);
+        }
+        #splash-screen.hidden {
+            opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
+        }
+        #splash-screen .logo-wrapper {
+            position: relative;
+            width: 120px;
+            height: 120px;
+            margin-bottom: 24px;
+        }
+        #splash-screen .logo-wrapper svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 8px 30px rgba(74, 108, 247, 0.3));
+            animation: float 2.5s ease-in-out infinite;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+        #splash-screen h1 {
+            font-size: 2.8rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #4a6cf7, #6d8cff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            margin-bottom: 4px;
+        }
+        #splash-screen p {
+            font-size: 1rem;
+            color: rgba(255,255,255,0.5);
+            font-weight: 300;
+            letter-spacing: 2px;
+            margin-bottom: 32px;
+        }
+        .loader {
+            width: 200px;
+            height: 3px;
+            background: rgba(255,255,255,0.06);
+            border-radius: 4px;
+            overflow: hidden;
+        }
+        .loader-bar {
+            width: 0%;
+            height: 100%;
+            background: linear-gradient(90deg, #4a6cf7, #8aabff);
+            border-radius: 4px;
+            animation: loading 2s ease-in-out forwards;
+        }
+        @keyframes loading {
+            0% { width: 0%; }
+            100% { width: 100%; }
         }
 
-        /* Desktop Area */
-        .desktop {
+        /* ===== ডেস্কটপ UI ===== */
+        #desktop {
+            display: none;
+            width: 100%;
+            height: 100%;
+            height: 100dvh;
+            flex-direction: column;
+            background: radial-gradient(ellipse at 50% 0%, #1a1f2e 0%, #0b0e17 100%);
+            position: relative;
+        }
+        #desktop.active {
+            display: flex;
+        }
+
+        #desktop::before {
+            content: '';
+            position: absolute;
+            top: -30%;
+            left: -10%;
+            width: 60%;
+            height: 80%;
+            background: radial-gradient(circle, rgba(74,108,247,0.06) 0%, transparent 70%);
+            pointer-events: none;
+        }
+        #desktop::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            right: -10%;
+            width: 50%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(109,140,255,0.04) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .desktop-area {
             flex: 1;
-            padding: 30px;
+            padding: 24px 20px 12px 20px;
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            grid-auto-rows: 120px;
-            gap: 25px;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            grid-auto-rows: 140px;
+            gap: 24px 16px;
             align-content: flex-start;
+            overflow-y: auto;
+            position: relative;
             z-index: 1;
+            padding-bottom: calc(12px + env(safe-area-inset-bottom, 0px));
         }
 
-        /* Desktop Shortcuts */
         .desktop-icon {
             display: flex;
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            width: 110px;
-            height: 110px;
-            border-radius: 12px;
-            cursor: pointer;
             text-decoration: none;
-            color: var(--text-color);
-            text-align: center;
-            transition: all 0.2s ease;
-            background: transparent;
-            border: 1px solid transparent;
-            outline: none;
+            background: rgba(255,255,255,0.03);
+            backdrop-filter: blur(4px);
+            -webkit-backdrop-filter: blur(4px);
+            border: 1px solid rgba(255,255,255,0.06);
+            border-radius: 20px;
+            padding: 16px 8px;
+            transition: all 0.25s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+            cursor: pointer;
+            color: #e8edff;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
-
         .desktop-icon:hover {
-            background: var(--icon-hover);
-            border-color: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(5px);
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
-            transform: translateY(-2px);
+            background: rgba(255,255,255,0.07);
+            border-color: rgba(74,108,247,0.3);
+            transform: translateY(-6px);
+            box-shadow: 0 12px 40px rgba(74,108,247,0.15);
         }
-
+        .desktop-icon:active {
+            transform: scale(0.95);
+        }
         .desktop-icon svg {
-            width: 50px;
-            height: 50px;
-            margin-bottom: 8px;
-            filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+            width: 52px;
+            height: 52px;
+            margin-bottom: 10px;
+            filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
         }
-
         .desktop-icon span {
-            font-size: 13px;
+            font-size: 0.8rem;
             font-weight: 500;
-            text-shadow: 1px 1px 3px rgba(0, 0, 0, 0.8);
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
+            text-align: center;
+            line-height: 1.3;
+            color: rgba(255,255,255,0.7);
+            letter-spacing: 0.3px;
+        }
+        .desktop-icon-form {
+            display: contents;
+        }
+        .desktop-icon-form button {
+            background: none;
+            border: none;
+            padding: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: #e8edff;
+            font-family: 'Inter', sans-serif;
+            cursor: pointer;
         }
 
-        /* Taskbar */
+        /* ===== টাস্কবার ===== */
         .taskbar {
-            height: 48px;
-            background: var(--taskbar-bg);
-            backdrop-filter: blur(10px);
-            border-top: 1px solid rgba(255, 255, 255, 0.1);
+            height: 56px;
+            background: rgba(11, 14, 23, 0.7);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border-top: 1px solid rgba(255,255,255,0.06);
             display: flex;
             justify-content: space-between;
             align-items: center;
             padding: 0 20px;
-            z-index: 1000;
+            flex-shrink: 0;
+            position: relative;
+            z-index: 2;
+            padding-bottom: env(safe-area-inset-bottom, 0px);
         }
-
         .taskbar-left {
             display: flex;
             align-items: center;
-            gap: 10px;
-            font-weight: bold;
-            font-size: 15px;
-            letter-spacing: 0.5px;
+            gap: 12px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: rgba(255,255,255,0.8);
         }
-
         .taskbar-left svg {
-            width: 22px;
-            height: 22px;
+            width: 28px;
+            height: 28px;
         }
-
+        .taskbar-left .brand {
+            font-weight: 700;
+            background: linear-gradient(135deg, #4a6cf7, #8aabff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
         .taskbar-right {
             display: flex;
             align-items: center;
-            gap: 15px;
-            font-size: 14px;
+            gap: 18px;
+            font-size: 0.85rem;
             font-weight: 500;
+            color: rgba(255,255,255,0.6);
         }
-
-        /* Floating Console Window (Modal) */
-        .modal {
-            display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            width: 90%;
-            max-width: 650px;
-            background: var(--modal-bg);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 8px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
-            z-index: 2000;
-            overflow: hidden;
+        .taskbar-right .time {
+            color: #fff;
+            font-weight: 600;
+            letter-spacing: 0.5px;
         }
-
-        .modal.active {
-            display: block;
-        }
-
-        .modal-header {
-            background: rgba(0, 0, 0, 0.3);
-            padding: 10px 15px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-
-        .modal-title {
-            font-size: 14px;
-            font-weight: bold;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .modal-close {
-            background: #ef4444;
-            border: none;
-            width: 14px;
-            height: 14px;
+        .taskbar-right .status-dot {
+            display: inline-block;
+            width: 8px;
+            height: 8px;
             border-radius: 50%;
-            cursor: pointer;
+            margin-right: 4px;
+        }
+        .taskbar-right .status-dot.online {
+            background: #4ade80;
+            box-shadow: 0 0 8px rgba(74, 222, 128, 0.3);
+        }
+        .taskbar-right .status-dot.offline {
+            background: #f87171;
+            box-shadow: 0 0 8px rgba(248, 113, 113, 0.3);
         }
 
-        .modal-close:hover {
-            background: #dc2626;
+        /* ===== মডাল (কমান্ড কনসোল) ===== */
+        .modal-content {
+            background: rgba(11, 14, 23, 0.85) !important;
+            backdrop-filter: blur(30px) !important;
+            border: 1px solid rgba(255,255,255,0.08) !important;
+            border-radius: 24px !important;
+            color: #e8edff !important;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.6) !important;
         }
-
+        .modal-header {
+            border-bottom: 1px solid rgba(255,255,255,0.06) !important;
+            padding: 18px 24px !important;
+        }
+        .modal-header .modal-title {
+            font-weight: 600;
+            color: #fff;
+        }
         .modal-body {
-            padding: 15px;
+            padding: 24px !important;
         }
-
         .console-output {
+            background: rgba(0,0,0,0.3) !important;
+            color: #b0c4ff !important;
+            border: 1px solid rgba(255,255,255,0.06) !important;
+            border-radius: 12px !important;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            padding: 12px 16px;
             width: 100%;
             height: 200px;
-            background: #000000;
-            color: #38bdf8;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
-            padding: 10px;
-            font-family: 'Courier New', Courier, monospace;
-            box-sizing: border-box;
             resize: none;
-            font-size: 13px;
-            margin-bottom: 15px;
         }
-
-        .cmd-form {
-            display: flex;
-            gap: 10px;
-        }
-
         .cmd-input {
-            flex: 1;
-            padding: 8px 12px;
-            background: #0f172a;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 4px;
-            color: #ffffff;
-            font-size: 14px;
+            background: rgba(255,255,255,0.05) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255,255,255,0.08) !important;
+            border-radius: 12px !important;
+            color: #e8edff !important;
+            padding: 12px 16px;
+            width: 100%;
+            font-size: 0.9rem;
+        }
+        .cmd-input:focus {
+            border-color: #4a6cf7 !important;
+            box-shadow: 0 0 0 3px rgba(74,108,247,0.15) !important;
+            outline: none;
+        }
+        .cmd-input::placeholder {
+            color: rgba(255,255,255,0.25);
+        }
+        .btn-primary {
+            background: #4a6cf7 !important;
+            border: none !important;
+            border-radius: 12px !important;
+            padding: 10px 28px !important;
+            font-weight: 600;
+            color: #fff !important;
+            transition: all 0.2s;
+        }
+        .btn-primary:hover {
+            background: #5d7cf8 !important;
+            transform: scale(1.02);
         }
 
-        .cmd-btn {
-            background: #10b981;
-            color: white;
-            border: none;
-            padding: 8px 15px;
-            border-radius: 4px;
-            cursor: pointer;
-            font-weight: bold;
+        /* ===== মোবাইল রেসপন্সিভ ===== */
+        @media (max-width: 576px) {
+            #splash-screen h1 {
+                font-size: 2rem;
+            }
+            #splash-screen .logo-wrapper {
+                width: 80px;
+                height: 80px;
+            }
+            .desktop-area {
+                grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+                grid-auto-rows: 110px;
+                gap: 16px 12px;
+                padding: 16px 12px 8px 12px;
+            }
+            .desktop-icon {
+                padding: 12px 4px;
+                border-radius: 16px;
+            }
+            .desktop-icon svg {
+                width: 38px;
+                height: 38px;
+            }
+            .desktop-icon span {
+                font-size: 0.65rem;
+            }
+            .taskbar {
+                height: 48px;
+                padding: 0 12px;
+            }
+            .taskbar-left .brand {
+                font-size: 0.8rem;
+            }
+            .taskbar-left svg {
+                width: 22px;
+                height: 22px;
+            }
+            .taskbar-right {
+                font-size: 0.7rem;
+                gap: 10px;
+            }
+            .taskbar-right .time {
+                font-size: 0.8rem;
+            }
+            .modal-content {
+                border-radius: 16px !important;
+                margin: 12px;
+            }
+        }
+        @media (min-width: 577px) and (max-width: 992px) {
+            .desktop-area {
+                grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            }
         }
 
-        .cmd-btn:hover {
-            background: #059669;
+        .desktop-area::-webkit-scrollbar {
+            width: 4px;
+        }
+        .desktop-area::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .desktop-area::-webkit-scrollbar-thumb {
+            background: rgba(255,255,255,0.1);
+            border-radius: 4px;
+        }
+        .desktop-area::-webkit-scrollbar-thumb:hover {
+            background: rgba(255,255,255,0.2);
         }
     </style>
 </head>
 <body>
 
-    <!-- Desktop Workspace -->
-    <div class="desktop">
-
-        <!-- 1. Goat Farm App Shortcut (app.php) -->
-        <a href="app.php" class="desktop-icon">
-            <!-- Customized Goat/Farm SVG Icon -->
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M19 10C19 6.13401 15.866 3 12 3C8.13401 3 5 6.13401 5 10C5 12.3807 6.18562 14.4842 8 15.7294V19C8 19.5523 8.44772 20 9 20H15C15.5523 20 16 19.5523 16 19V15.7294C17.8144 14.4842 19 12.3807 19 10Z" fill="#10B981"/>
-                <path d="M12 11C11.4477 11 11 11.4477 11 12V14C11 14.5523 11.4477 15 12 15C12.5523 15 13 14.5523 13 14V12C13 11.4477 12.5523 11 12 11Z" fill="#FFFFFF"/>
-                <path d="M7 6C6.44772 6 6 6.44772 6 7C6 7.55228 6.44772 8 7 8C7.55228 8 8 7.55228 8 7C8 6.44772 7.55228 6 7 6Z" fill="#FBBF24"/>
-                <path d="M17 6C16.4477 6 16 6.44772 16 7C16 7.55228 16.4477 8 17 8C17.5523 8 18 7.55228 18 7C18 6.44772 17.5523 6 17 6Z" fill="#FBBF24"/>
+    <!-- ===== স্প্ল্যাশ স্ক্রিন ===== -->
+    <!-- POST রিকোয়েস্ট হলে স্প্ল্যাশ স্ক্রিন ক্লাসটিকে আগেই হিডেন (hidden) করে দেওয়া হচ্ছে -->
+    <div id="splash-screen" class="<?php echo $is_post ? 'hidden' : ''; ?>">
+        <div class="logo-wrapper">
+            <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="60" cy="60" r="58" fill="rgba(74,108,247,0.08)" stroke="rgba(74,108,247,0.2)" stroke-width="2"/>
+                <path d="M60 25C46 25 35 35 35 48C35 61 46 70 60 70C74 70 85 61 85 48C85 35 74 25 60 25Z" fill="url(#goatGrad)"/>
+                <path d="M60 38C53 38 47 44 47 51C47 58 53 63 60 63C67 63 73 58 73 51C73 44 67 38 60 38Z" fill="white"/>
+                <path d="M50 56L55 61L68 48" stroke="white" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                <circle cx="42" cy="47" r="4" fill="white"/>
+                <circle cx="78" cy="47" r="4" fill="white"/>
+                <defs>
+                    <linearGradient id="goatGrad" x1="35" y1="25" x2="85" y2="70" gradientUnits="userSpaceOnUse">
+                        <stop stop-color="#4a6cf7"/>
+                        <stop offset="1" stop-color="#8aabff"/>
+                    </linearGradient>
+                </defs>
             </svg>
-            <span>Goat Management</span>
-        </a>
-
-        <!-- 2. File Manager (pcmanfm) -->
-        <form method="POST" class="desktop-icon-form" style="display:inline;">
-            <input type="hidden" name="action" value="filemanager">
-            <button type="submit" class="desktop-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 6H12L10 4H4C2.89 4 2.01 4.89 2.01 6L2 18C2 19.1 2.89 20 4 20H20C21.1 20 22 19.1 22 18V8C22 6.9 21.1 6 20 6Z" fill="#F59E0B"/>
-                </svg>
-                <span>File Manager</span>
-            </button>
-        </form>
-
-        <!-- 3. Terminal (lxterminal) -->
-        <form method="POST" class="desktop-icon-form" style="display:inline;">
-            <input type="hidden" name="action" value="terminal">
-            <button type="submit" class="desktop-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M20 4H4C2.89 4 2 4.9 2 6V18C2 19.1 2.89 20 4 20H20C21.1 20 22 19.1 22 18V6C22 4.9 21.1 4 20 4ZM20 18H4V8H20V18ZM18 12H12V14H18V12ZM10 10H6V16H10V10Z" fill="#4B5563"/>
-                </svg>
-                <span>Terminal</span>
-            </button>
-        </form>
-
-        <!-- 4. Execute Command (Local Console Modal Toggle) -->
-        <button type="button" class="desktop-icon" onclick="toggleModal()">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <rect width="24" height="24" rx="4" fill="#3B82F6"/>
-                <path d="M7 10L10 12L7 14" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                <path d="M11 14H16" stroke="white" stroke-width="2" stroke-linecap="round"/>
-            </svg>
-            <span>Run Command</span>
-        </button>
-
-        <!-- 5. Reboot -->
-        <form method="POST" class="desktop-icon-form" style="display:inline;" onsubmit="return confirm('Are you sure you want to reboot the system?');">
-            <input type="hidden" name="action" value="reboot">
-            <button type="submit" class="desktop-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M12 4V1L8 5L12 9V6C15.31 6 18 8.69 18 12C18 13.49 17.45 14.85 16.55 15.9L17.96 17.31C19.23 15.82 20 13.9 20 12C20 7.58 16.42 4 12 4ZM6 12C6 10.51 6.55 9.15 7.45 8.1L6.04 6.69C4.77 8.18 4 10.1 4 12C4 16.42 7.58 20 12 20V23L16 19L12 15V18C8.69 18 6 15.31 6 12Z" fill="#EF4444"/>
-                </svg>
-                <span>Reboot</span>
-            </button>
-        </form>
-
-        <!-- 6. Shutdown -->
-        <form method="POST" class="desktop-icon-form" style="display:inline;" onsubmit="return confirm('Are you sure you want to power off the system?');">
-            <input type="hidden" name="action" value="shutdown">
-            <button type="submit" class="desktop-icon">
-                <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M13 3H11V13H13V3ZM17.83 5.17L16.41 6.59C18.62 8.44 20 11.05 20 14C20 18.42 16.42 22 12 22C7.58 22 4 18.42 4 14C4 11.05 5.38 8.44 7.59 6.58L6.17 5.17C3.53 7.39 2 10.55 2 14C2 19.5 6.5 24 12 24C17.5 24 22 19.5 22 14C22 10.55 20.47 7.39 17.83 5.17Z" fill="#DC2626"/>
-                </svg>
-                <span>Power Off</span>
-            </button>
-        </form>
-
+        </div>
+        <h1>Goat OS</h1>
+        <p>SMART FARM MANAGEMENT</p>
+        <div class="loader">
+            <div class="loader-bar"></div>
+        </div>
     </div>
 
-    <!-- Floating System Console Modal -->
-    <div class="modal <?php echo $show_modal ? 'active' : ''; ?>" id="cmdModal">
-        <div class="modal-header">
-            <div class="modal-title">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="24" height="24" rx="4" fill="#10B981"/>
-                    <path d="M8 10L11 12L8 14" stroke="white" stroke-width="2"/>
+    <!-- ===== ডেস্কটপ UI ===== -->
+    <div id="desktop">
+        <div class="desktop-area">
+            
+            <!-- 1. Goat Management -->
+            <a href="app.php" class="desktop-icon">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="8" y="8" width="48" height="48" rx="14" fill="url(#appGrad1)" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+                    <path d="M32 20C26 20 21 25 21 31C21 37 26 42 32 42C38 42 43 37 43 31C43 25 38 20 32 20Z" fill="white" opacity="0.9"/>
+                    <path d="M32 26C28.5 26 25.5 29 25.5 32.5C25.5 36 28.5 39 32 39C35.5 39 38.5 36 38.5 32.5C38.5 29 35.5 26 32 26Z" fill="#4a6cf7"/>
+                    <circle cx="27" cy="31" r="2" fill="white"/>
+                    <circle cx="37" cy="31" r="2" fill="white"/>
+                    <defs>
+                        <linearGradient id="appGrad1" x1="8" y1="8" x2="56" y2="56" gradientUnits="userSpaceOnUse">
+                            <stop stop-color="#4a6cf7"/>
+                            <stop offset="1" stop-color="#6d8cff"/>
+                        </linearGradient>
+                    </defs>
                 </svg>
-                System Console (Command Panel)
-            </div>
-            <button type="button" class="modal-close" onclick="toggleModal()"></button>
-        </div>
-        <div class="modal-body">
-            <textarea class="console-output" readonly placeholder="Command output will be displayed here..."><?php echo htmlspecialchars($output); ?></textarea>
-            <form method="POST" class="cmd-form" target="_self">
-                <input type="text" name="custom_command" class="cmd-input" placeholder="Type a command... (e.g., ls, df -h, free -m)" autofocus>
-                <button type="submit" class="cmd-btn">Execute</button>
+                <span>Goat Management</span>
+            </a>
+
+            <!-- 2. File Manager -->
+            <form method="POST" class="desktop-icon-form">
+                <input type="hidden" name="action" value="filemanager">
+                <button type="submit" class="desktop-icon">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="8" y="8" width="48" height="48" rx="14" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+                        <path d="M44 20H32L28 16H20C17.79 16 16 17.79 16 20V44C16 46.21 17.79 48 20 48H44C46.21 48 48 46.21 48 44V24C48 21.79 46.21 20 44 20Z" fill="#f59e0b" opacity="0.9"/>
+                        <path d="M38 28H26V31H38V28Z" fill="white"/>
+                        <path d="M38 34H26V37H38V34Z" fill="white" opacity="0.6"/>
+                    </svg>
+                    <span>File Manager</span>
+                </button>
             </form>
+
+            <!-- 3. Terminal -->
+            <form method="POST" class="desktop-icon-form">
+                <input type="hidden" name="action" value="terminal">
+                <button type="submit" class="desktop-icon">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="8" y="8" width="48" height="48" rx="14" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+                        <rect x="16" y="18" width="32" height="28" rx="4" fill="#10b981" opacity="0.9"/>
+                        <path d="M24 28L29 32L24 36" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M32 36H40" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                    </svg>
+                    <span>Terminal</span>
+                </button>
+            </form>
+
+            <!-- 4. Run Command -->
+            <button type="button" class="desktop-icon" data-bs-toggle="modal" data-bs-target="#cmdModal">
+                <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="8" y="8" width="48" height="48" rx="14" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+                    <rect x="16" y="18" width="32" height="28" rx="4" fill="#3b82f6" opacity="0.9"/>
+                    <path d="M24 28L29 32L24 36" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+                    <path d="M32 36H40" stroke="white" stroke-width="2.5" stroke-linecap="round"/>
+                </svg>
+                <span>Run Command</span>
+            </button>
+
+            <!-- 5. Reboot -->
+            <form method="POST" class="desktop-icon-form" onsubmit="return confirm('Reboot the system?');">
+                <input type="hidden" name="action" value="reboot">
+                <button type="submit" class="desktop-icon">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="8" y="8" width="48" height="48" rx="14" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+                        <path d="M32 20V16L26 22L32 28V24C36.42 24 40 27.58 40 32C40 33.98 39.18 35.8 37.88 37.1L39.92 39.14C41.52 37.38 42.5 35.08 42.5 32.5C42.5 26.7 37.8 22 32 22Z" fill="#f87171"/>
+                        <path d="M24 32C24 27.58 27.58 24 32 24V20C25.37 20 20 25.37 20 32C20 38.63 25.37 44 32 44V48L38 42L32 36V40C27.58 40 24 36.42 24 32Z" fill="#f87171"/>
+                    </svg>
+                    <span>Reboot</span>
+                </button>
+            </form>
+
+            <!-- 6. Power Off -->
+            <form method="POST" class="desktop-icon-form" onsubmit="return confirm('Shutdown the system?');">
+                <input type="hidden" name="action" value="shutdown">
+                <button type="submit" class="desktop-icon">
+                    <svg viewBox="0 0 64 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="8" y="8" width="48" height="48" rx="14" fill="#1e293b" stroke="rgba(255,255,255,0.08)" stroke-width="1.5"/>
+                        <path d="M33 16H31V34H33V16Z" fill="#ef4444"/>
+                        <path d="M42.42 18.58L40.64 20.36C43.56 22.88 45.5 26.38 45.5 30.5C45.5 38.6 38.9 45.2 30.8 45.2C22.7 45.2 16.1 38.6 16.1 30.5C16.1 26.38 18.04 22.88 20.96 20.36L19.18 18.58C15.68 21.56 13.5 25.78 13.5 30.5C13.5 39.94 21.46 48 30.8 48C40.14 48 48.1 39.94 48.1 30.5C48.1 25.78 45.92 21.56 42.42 18.58Z" fill="#ef4444"/>
+                    </svg>
+                    <span>Power Off</span>
+                </button>
+            </form>
+
+        </div>
+
+        <!-- ===== টাস্কবার ===== -->
+        <div class="taskbar">
+            <div class="taskbar-left">
+                <svg viewBox="0 0 28 28" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="14" cy="14" r="12" fill="#4a6cf7"/>
+                    <path d="M14 8C11.79 8 10 9.79 10 12C10 14.21 11.79 16 14 16C16.21 16 18 14.21 18 12C18 9.79 16.21 8 14 8Z" fill="white"/>
+                    <path d="M14 18C10.13 18 7 20.69 7 24H21C21 20.69 17.87 18 14 18Z" fill="white" opacity="0.6"/>
+                </svg>
+                <span class="brand">Goat OS</span>
+            </div>
+            <div class="taskbar-right">
+                <span id="network-status">
+                    <span class="status-dot online" id="network-dot"></span>
+                    <span id="network-text">Online</span>
+                </span>
+                <span id="date-display"></span>
+                <span class="time" id="time-display"></span>
+            </div>
         </div>
     </div>
 
-    <!-- Taskbar -->
-    <div class="taskbar">
-        <div class="taskbar-left">
-            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <circle cx="12" cy="12" r="10" fill="#10B981"/>
-                <path d="M12 6C9.79 6 8 7.79 8 10C8 12.21 9.79 14 12 14C14.21 14 16 12.21 16 10C16 7.79 14.21 6 12 6ZM12 12C10.9 12 10 11.1 10 10C10 8.9 10.9 8 12 8C13.1 8 14 8.9 14 10C14 11.1 13.1 12 12 12Z" fill="white"/>
-            </svg>
-            <span>Goat OS (Smart Farm v1.0)</span>
-        </div>
-        <div class="taskbar-right">
-            <span id="system-date"></span>
-            <span id="system-time" style="color: #10B981;"></span>
+    <!-- ===== কমান্ড মডাল ===== -->
+    <div class="modal fade" id="cmdModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="bi bi-terminal me-2"></i>System Console</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <textarea class="console-output" readonly placeholder="Command output will appear here..."><?php echo htmlspecialchars($output); ?></textarea>
+                    <form method="POST" class="mt-3" id="cmdForm">
+                        <div class="d-flex gap-2">
+                            <input type="text" name="custom_command" class="cmd-input" placeholder="Type a command... (e.g. ls, df -h, free -m)" autocomplete="off">
+                            <button type="submit" class="btn btn-primary">Run</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
         </div>
     </div>
 
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // Realtime Clock Functionality
+        // ===== স্প্ল্যাশ → ডেস্কটপ =====
+        document.addEventListener('DOMContentLoaded', function() {
+            <?php if (!$is_post): ?>
+            // প্রথমবার পেজ লোড হলে স্প্ল্যাশ স্ক্রিন দেখাবে
+            setTimeout(function() {
+                document.getElementById('splash-screen').classList.add('hidden');
+                document.getElementById('desktop').classList.add('active');
+            }, 2200);
+            <?php else: ?>
+            // POST রিকোয়েস্ট সাবমিট হলে স্প্ল্যাশ স্ক্রিন স্কিপ হবে
+            document.getElementById('splash-screen').style.display = 'none';
+            document.getElementById('desktop').classList.add('active');
+            <?php endif; ?>
+        });
+
+        // ===== রিয়েল টাইম ক্লক =====
         function updateClock() {
             const now = new Date();
-            
-            // Format Date
-            const options = { year: 'numeric', month: 'short', day: 'numeric' };
-            const dateStr = now.toLocaleDateString('en-US', options);
-            
-            // Format Time
-            let hours = now.getHours();
-            let minutes = now.getMinutes();
-            let seconds = now.getSeconds();
-            const ampm = hours >= 12 ? 'PM' : 'AM';
-            hours = hours % 12;
-            hours = hours ? hours : 12; // 0 should be 12
-            minutes = minutes < 10 ? '0'+minutes : minutes;
-            seconds = seconds < 10 ? '0'+seconds : seconds;
-            
-            const timeStr = `${hours}:${minutes}:${seconds} ${ampm}`;
-
-            document.getElementById('system-date').innerText = dateStr;
-            document.getElementById('system-time').innerText = timeStr;
+            document.getElementById('date-display').textContent = now.toLocaleDateString('en-US', { 
+                year: 'numeric', month: 'short', day: 'numeric' 
+            });
+            document.getElementById('time-display').textContent = now.toLocaleTimeString('en-US', { 
+                hour: '2-digit', minute: '2-digit', second: '2-digit' 
+            });
         }
-
-        // Run clock
         setInterval(updateClock, 1000);
         updateClock();
 
-        // Toggle command execution modal
-        function toggleModal() {
-            const modal = document.getElementById('cmdModal');
-            modal.classList.toggle('active');
+        // ===== নেটওয়ার্ক স্ট্যাটাস =====
+        function updateNetwork() {
+            const dot = document.getElementById('network-dot');
+            const text = document.getElementById('network-text');
+            if (navigator.onLine) {
+                dot.className = 'status-dot online';
+                text.textContent = 'Online';
+            } else {
+                dot.className = 'status-dot offline';
+                text.textContent = 'Offline';
+            }
         }
+        window.addEventListener('online', updateNetwork);
+        window.addEventListener('offline', updateNetwork);
+        updateNetwork();
+
+        // ===== মডাল ওপেন হলে অটোফোকাস =====
+        const cmdModal = document.getElementById('cmdModal');
+        cmdModal.addEventListener('shown.bs.modal', function() {
+            document.querySelector('.cmd-input').focus();
+        });
+
+        // ===== ফর্ম জমার পর মডাল অটোমেটিক্যালি ওপেন করা =====
+        <?php if ($show_modal): ?>
+        document.addEventListener('DOMContentLoaded', function() {
+            var modal = new bootstrap.Modal(document.getElementById('cmdModal'));
+            modal.show();
+            
+            // কনসোলের টেক্সট স্বয়ংক্রিয়ভাবে স্ক্রল করে একদম নিচে নামানো
+            const consoleOutput = document.querySelector('.console-output');
+            if (consoleOutput) {
+                consoleOutput.scrollTop = consoleOutput.scrollHeight;
+            }
+            
+            // মডাল অ্যানিমেশন শেষ হওয়ার পর ইনপুটে অটো-ফোকাস করা
+            setTimeout(() => {
+                document.querySelector('.cmd-input').focus();
+            }, 500);
+        });
+        <?php endif; ?>
     </script>
 </body>
 </html>

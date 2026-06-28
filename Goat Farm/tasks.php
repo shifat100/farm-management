@@ -1,8 +1,12 @@
 <?php
 require_once 'functions.php';
 
-// Create tasks or mark completion states
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF Validation
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        die("<div class='alert alert-danger'>Invalid security token. Please refresh the page and try again.</div>");
+    }
+
     if (isset($_POST['create_task']) && $_SESSION['user']['role'] !== 'worker') {
         $assigned_to = (int)$_POST['assigned_to_id'];
         $title = trim($_POST['task_title'] ?? '');
@@ -19,7 +23,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['complete_task'])) {
         $task_id = (int)$_POST['task_id'];
         
-        // Ensure workers only complete tasks assigned to themselves
         if ($_SESSION['user']['role'] === 'worker') {
             $stmt_chk = $pdo->prepare("SELECT assigned_to_id FROM employee_tasks WHERE id = ?");
             $stmt_chk->execute([$task_id]);
@@ -33,7 +36,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Read tasks depending on authorization scopes
 if ($_SESSION['user']['role'] === 'worker') {
     $stmt = $pdo->prepare("SELECT t.*, u.username as assigned_to 
                            FROM employee_tasks t 
@@ -54,12 +56,12 @@ $workers = $pdo->query("SELECT id, username, role FROM users ORDER BY username A
 
 <div class="row">
     <?php if ($_SESSION['user']['role'] !== 'worker'): ?>
-    <!-- Admin assignment control deck -->
     <div class="col-md-4 mb-4">
         <div class="card p-4 shadow-sm bg-white border">
             <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-clipboard-plus me-2"></i>Assign Farm Chore</h5>
             <form method="post">
                 <input type="hidden" name="create_task" value="1">
+                <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                 <div class="mb-2">
                     <label class="form-label small">Task Summary</label>
                     <input name="task_title" class="form-control form-control-sm" required placeholder="e.g. Sanitize Pen C">
@@ -84,7 +86,6 @@ $workers = $pdo->query("SELECT id, username, role FROM users ORDER BY username A
     </div>
     <?php endif; ?>
 
-    <!-- Interactive task presentation board -->
     <div class="col-md-<?=$_SESSION['user']['role'] === 'worker' ? '12' : '8'?>">
         <div class="card p-4 shadow-sm bg-white border h-100">
             <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-kanban me-2"></i>Active Daily Chores Tracker</h5>
@@ -112,6 +113,7 @@ $workers = $pdo->query("SELECT id, username, role FROM users ORDER BY username A
                                 <form method="post" class="d-inline">
                                     <input type="hidden" name="complete_task" value="1">
                                     <input type="hidden" name="task_id" value="<?=(int)$t['id']?>">
+                                    <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                                     <button class="btn btn-sm btn-success py-1 px-2"><i class="bi bi-check-lg"></i> Complete</button>
                                 </form>
                                 <?php else: ?>

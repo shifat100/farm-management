@@ -175,6 +175,26 @@ CREATE INDEX idx_animals_status ON animals(status);
 CREATE INDEX idx_animals_type ON animals(type);
 CREATE INDEX idx_costs_animal ON animal_costs(animal_id);
 
+-- ওজন রেকর্ডের জন্য নতুন টেবিল
+CREATE TABLE IF NOT EXISTS weight_records (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    animal_id INT NOT NULL,
+    weight DECIMAL(5,2) NOT NULL,
+    record_date DATE NOT NULL,
+    notes VARCHAR(255),
+    FOREIGN KEY (animal_id) REFERENCES animals(id) ON DELETE CASCADE
+);
+
+-- animals টেবিলে নতুন কলাম
+ALTER TABLE animals ADD COLUMN kidding_date DATE DEFAULT NULL;
+ALTER TABLE animals ADD COLUMN last_heat_date DATE DEFAULT NULL;
+ALTER TABLE animals ADD COLUMN next_heat_date DATE DEFAULT NULL;
+
+-- activities টেবিলে Withdrawal End Date যোগ করা
+ALTER TABLE activities ADD COLUMN withdrawal_end_date DATE DEFAULT NULL;
+
+-- inventory পেইজে ইতিমধ্যে vaccine_stock আছে, ওখানেই এক্সপায়ারি চেক করা হবে
+
 -- ALTER TABLE animals ADD COLUMN color VARCHAR(100) DEFAULT NULL AFTER breed;
 ALTER TABLE animals ADD COLUMN temp_celsius DECIMAL(4,2) DEFAULT NULL AFTER weight;
 ALTER TABLE animals ADD COLUMN pulse_rate INT DEFAULT NULL AFTER temp_celsius;

@@ -4,6 +4,11 @@ if ($_SESSION['user']['role'] !== 'admin') {
 }
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF Validation
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        die("<div class='alert alert-danger'>Invalid security token. Please refresh the page and try again.</div>");
+    }
+
     if (isset($_POST['add'])) {
         $username = trim($_POST['username'] ?? '');
         $password = $_POST['password'] ?? '';
@@ -39,6 +44,7 @@ $users = $pdo->query("SELECT id, username, role, created_at FROM users")->fetchA
     <h6>Deploy Access Key Credentials</h6>
     <form method="post" class="row g-3 align-items-end">
         <input type="hidden" name="add" value="1">
+        <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
         <div class="col-md-3">
             <label class="form-label small">Username</label>
             <input name="username" class="form-control" placeholder="Target Alias" required>
@@ -77,6 +83,7 @@ $users = $pdo->query("SELECT id, username, role, created_at FROM users")->fetchA
                     <form method="post" class="d-inline">
                         <input type="hidden" name="delete" value="1">
                         <input type="hidden" name="id" value="<?=$u['id']?>">
+                        <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                         <button class="btn btn-sm btn-danger" onclick="return confirm('Revoke credential accesses permanently?')"><i class="bi bi-trash"></i> Revoke</button>
                     </form>
                     <?php else: ?>

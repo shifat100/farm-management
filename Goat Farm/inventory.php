@@ -1,8 +1,12 @@
 <?php
 require_once 'functions.php';
 
-// Add Stock Intake
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    // CSRF Validation
+    if (!isset($_POST['csrf_token']) || !validateCSRFToken($_POST['csrf_token'])) {
+        die("<div class='alert alert-danger'>Invalid security token. Please refresh the page and try again.</div>");
+    }
+
     if (isset($_POST['add_stock'])) {
         $vaccine_id = (int)$_POST['vaccine_id'];
         $batch = trim($_POST['batch_number'] ?? '');
@@ -24,7 +28,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
         $allow_ums = true;
         if ($feed_type === 'UMS') {
-            // Validate if any kids under 6 months exist in selected shed
             $stmt_kids = $pdo->prepare("SELECT COUNT(*) FROM animals WHERE shed_id = ? AND TIMESTAMPDIFF(MONTH, dob, CURDATE()) < 6 AND status='Active'");
             $stmt_kids->execute([$shed_id]);
             $kid_count = (int)$stmt_kids->fetchColumn();
@@ -42,7 +45,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 }
 
-// Calculate dynamic DLS feed requirements based on current active weights [1]
 $feed_shed_id = isset($_GET['feed_shed_id']) && $_GET['feed_shed_id'] !== '' ? (int)$_GET['feed_shed_id'] : null;
 $total_weight = 0;
 if ($feed_shed_id) {
@@ -51,7 +53,6 @@ if ($feed_shed_id) {
     $total_weight = (float)$stmt_weight->fetchColumn();
 }
 
-// DLS Formulas: Grass = 10% of body weight, Concentrate = 1.5% of body weight
 $required_grass = $total_weight * 0.10;
 $required_concentrate = $total_weight * 0.015;
 
@@ -62,7 +63,6 @@ $consumption = $pdo->query("SELECT fc.*, s.name as shed_name FROM feed_consumpti
 ?>
 
 <div class="row">
-    <!-- Dynamic DLS Ration Diet Calculator -->
     <div class="col-md-12 mb-4">
         <div class="card p-4 shadow-sm bg-white border">
             <h5><i class="bi bi-calculator me-2"></i>DLS Smart Diet Planner</h5>
@@ -112,12 +112,12 @@ $consumption = $pdo->query("SELECT fc.*, s.name as shed_name FROM feed_consumpti
 </div>
 
 <div class="row">
-    <!-- Vaccine stock monitor -->
     <div class="col-md-6 mb-4">
         <div class="card p-4 shadow-sm bg-white border h-100">
             <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-capsules me-2"></i>Vaccine Stock Inventory</h5>
             <form method="post" class="row g-2 mb-3">
                 <input type="hidden" name="add_stock" value="1">
+                <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                 <div class="col-md-3">
                     <select name="vaccine_id" class="form-select form-select-sm" required>
                         <option value="">Select Vaccine</option>
@@ -153,12 +153,12 @@ $consumption = $pdo->query("SELECT fc.*, s.name as shed_name FROM feed_consumpti
         </div>
     </div>
 
-    <!-- Feed consumption monitor -->
     <div class="col-md-6 mb-4">
         <div class="card p-4 shadow-sm bg-white border h-100">
             <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-basket3 me-2"></i>Feed Consumption Tracker</h5>
             <form method="post" class="row g-2 mb-3">
                 <input type="hidden" name="log_feed" value="1">
+                <input type="hidden" name="csrf_token" value="<?= generateCSRFToken() ?>">
                 <div class="col-md-3">
                     <select name="shed_id" class="form-select form-select-sm" required>
                         <option value="">Select Shed</option>
