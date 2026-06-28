@@ -1,4 +1,20 @@
 document.addEventListener("DOMContentLoaded", function() {
+
+  function toggleSidebar() {
+    var sidebar = document.getElementById('sidebar');
+    sidebar.classList.toggle('show');
+    var overlay = document.querySelector('.sidebar-overlay');
+    if (overlay) overlay.classList.toggle('active');
+}
+// ওভারলে ক্লিক করলে সাইডবার বন্ধ
+document.addEventListener('click', function(e) {
+    var sidebar = document.getElementById('sidebar');
+    if (sidebar.classList.contains('show') && !sidebar.contains(e.target) && !e.target.closest('.btn-toggle-sidebar')) {
+        sidebar.classList.remove('show');
+        document.querySelector('.sidebar-overlay')?.classList.remove('active');
+    }
+});
+  
     // ---- 1. Dark Theme Persistence Logic ----
     const themeToggle = document.getElementById("darkModeToggle");
     const htmlElement = document.documentElement;
@@ -46,3 +62,4 @@ document.addEventListener("DOMContentLoaded", function() {
         });
     }
 });
+
