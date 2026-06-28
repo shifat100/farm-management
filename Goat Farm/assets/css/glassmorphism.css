@@ -1,0 +1,454 @@
+/* ==================================================
+   White Glassmorphism Theme - Bootstrap 5 Override
+   (সব পেজের জন্য রেসপন্সিভ ফিক্স সহ)
+   ================================================== */
+
+/* 1. ব্যাকগ্রাউন্ড */
+body {
+    background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+    min-height: 100vh;
+    background-attachment: fixed;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 2. গ্লাস ইফেক্ট */
+.card,
+.bg-white,
+.shadow-sm,
+.rounded,
+.table-responsive,
+.offcanvas,
+.modal-content,
+#sidebar {
+    background: rgba(255, 255, 255, 0.35) !important;
+    backdrop-filter: blur(20px) !important;
+    -webkit-backdrop-filter: blur(20px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15) !important;
+    color: #1a1a2e !important;
+}
+
+/* 3. কার্ড হেডার */
+.card-header,
+.card-header.bg-dark,
+.card-header.bg-primary,
+.card-header.bg-success,
+.card-header.bg-danger,
+.card-header.bg-warning,
+.card-header.bg-info,
+.card-header.bg-secondary,
+.card-header.bg-light {
+    background: rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(15px) !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+    color: #1a1a2e !important;
+}
+.card-header.text-white,
+.card-header .text-white {
+    color: #1a1a2e !important;
+}
+.card-header i {
+    color: #1a1a2e !important;
+}
+.card-header .badge {
+    background: rgba(0, 0, 0, 0.08) !important;
+}
+
+/* 4. সাইডবার */
+#sidebar {
+    background: rgba(255, 255, 255, 0.25) !important;
+    backdrop-filter: blur(15px) !important;
+    border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
+    color: #1a1a2e !important;
+}
+#sidebar .nav-link {
+    color: #1a1a2e !important;
+}
+#sidebar .nav-link:hover {
+    background: rgba(0, 0, 0, 0.05) !important;
+}
+#sidebar .nav-link.active {
+    background: rgba(0, 0, 0, 0.08) !important;
+    border-left-color: #4a6cf7 !important;
+    font-weight: 600;
+}
+
+/* 5. টেবিল */
+.table {
+    color: #1a1a2e !important;
+}
+.table-dark {
+    background: rgba(0, 0, 0, 0.08) !important;
+    color: #1a1a2e !important;
+}
+.table td, .table th {
+    border-color: rgba(0, 0, 0, 0.08) !important;
+}
+.table-hover tbody tr:hover {
+    background: rgba(0, 0, 0, 0.03) !important;
+}
+
+/* 6. ফর্ম */
+.form-control,
+.form-select,
+.input-group-text {
+    background: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    color: #1a1a2e !important;
+}
+.form-control::placeholder {
+    color: rgba(0, 0, 0, 0.4) !important;
+}
+.form-control:focus,
+.form-select:focus {
+    background: rgba(255, 255, 255, 0.7) !important;
+    border-color: #4a6cf7 !important;
+    box-shadow: 0 0 0 0.25rem rgba(74, 108, 247, 0.2) !important;
+}
+.form-label {
+    color: #1a1a2e !important;
+    font-weight: 500;
+}
+
+/* 7. বাটন */
+.btn-primary {
+    background: rgba(74, 108, 247, 0.2) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(74, 108, 247, 0.3) !important;
+    color: #1a1a2e !important;
+}
+.btn-primary:hover {
+    background: rgba(74, 108, 247, 0.35) !important;
+}
+.btn-success {
+    background: rgba(46, 204, 113, 0.2) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(46, 204, 113, 0.3) !important;
+    color: #1a1a2e !important;
+}
+.btn-success:hover {
+    background: rgba(46, 204, 113, 0.35) !important;
+}
+.btn-danger {
+    background: rgba(231, 76, 60, 0.2) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(231, 76, 60, 0.3) !important;
+    color: #1a1a2e !important;
+}
+.btn-danger:hover {
+    background: rgba(231, 76, 60, 0.35) !important;
+}
+.btn-warning {
+    background: rgba(241, 196, 15, 0.2) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(241, 196, 15, 0.3) !important;
+    color: #1a1a2e !important;
+}
+.btn-info {
+    background: rgba(23, 162, 184, 0.2) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(23, 162, 184, 0.3) !important;
+    color: #1a1a2e !important;
+}
+
+/* 8. ব্যাজ */
+.badge {
+    background: rgba(0, 0, 0, 0.08) !important;
+    backdrop-filter: blur(5px);
+    color: #1a1a2e !important;
+}
+.badge.bg-success { background: rgba(46, 204, 113, 0.3) !important; }
+.badge.bg-danger { background: rgba(231, 76, 60, 0.3) !important; }
+.badge.bg-warning { background: rgba(241, 196, 15, 0.3) !important; }
+.badge.bg-info { background: rgba(23, 162, 184, 0.3) !important; }
+.badge.bg-secondary { background: rgba(108, 117, 125, 0.3) !important; }
+
+/* 9. অ্যালার্ট */
+.alert {
+    background: rgba(255, 255, 255, 0.4) !important;
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.5) !important;
+    color: #1a1a2e !important;
+}
+.alert-danger { background: rgba(231, 76, 60, 0.15) !important; }
+.alert-success { background: rgba(46, 204, 113, 0.15) !important; }
+.alert-warning { background: rgba(241, 196, 15, 0.15) !important; color: #000 !important; }
+
+/* 10. মডাল ও অফক্যানভাস */
+.modal-content,
+.offcanvas {
+    background: rgba(255, 255, 255, 0.5) !important;
+    backdrop-filter: blur(30px) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    color: #1a1a2e !important;
+}
+.modal-header,
+.modal-footer,
+.offcanvas-header,
+.offcanvas-body {
+    border-color: rgba(0, 0, 0, 0.05) !important;
+}
+.btn-close {
+    filter: invert(0);
+}
+
+/* 11. টেক্সট রং */
+.text-muted {
+    color: rgba(0, 0, 0, 0.5) !important;
+}
+.text-dark {
+    color: #1a1a2e !important;
+}
+.text-white {
+    color: #1a1a2e !important;
+}
+a, .nav-link {
+    color: #1a1a2e !important;
+}
+a:hover, .nav-link:hover {
+    color: #4a6cf7 !important;
+}
+
+/* 12. নেভবার */
+.navbar {
+    background: rgba(255, 255, 255, 0.3) !important;
+    backdrop-filter: blur(15px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
+}
+.navbar-brand {
+    color: #1a1a2e !important;
+}
+
+/* 13. স্ক্রোলবার */
+::-webkit-scrollbar {
+    width: 8px;
+}
+::-webkit-scrollbar-track {
+    background: rgba(0, 0, 0, 0.05);
+}
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.15);
+    border-radius: 10px;
+}
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.25);
+}
+
+/* ===============================================
+   14. মোবাইল রেসপন্সিভ (সম্পূর্ণ – সব পেজের জন্য)
+   =============================================== */
+@media (max-width: 768px) {
+    /* ------ কন্টেইনার ও গ্রিড ------ */
+    .container-fluid.p-4 {
+        padding: 0.75rem !important;
+    }
+    .container-fluid.p-4 .row.g-3 {
+        --bs-gutter-y: 0.75rem !important;
+        --bs-gutter-x: 0.75rem !important;
+    }
+    /* স্ট্যাক করা কলামের জন্য প্যাডিং */
+    .row > [class*="col-"] {
+        padding-left: 0.5rem !important;
+        padding-right: 0.5rem !important;
+    }
+
+    /* ------ কার্ড ------ */
+    .card.p-4 {
+        padding: 1rem !important;
+    }
+    .card.p-3 {
+        padding: 0.75rem !important;
+    }
+    .card-body {
+        padding: 1rem !important;
+    }
+
+    /* ------ টেবিল (Animals, Activities, Reports, Vaccination) ------ */
+    .table-responsive {
+        border-radius: 0.5rem !important;
+        margin-bottom: 1rem !important;
+    }
+    .table {
+        font-size: 0.7rem !important; /* ছোট স্ক্রিনে আরও ছোট */
+    }
+    .table th, .table td {
+        padding: 0.3rem 0.3rem !important;
+        white-space: nowrap; /* প্রয়োজনে স্ক্রল হবে */
+    }
+    /* টেবিলের ব্যাজগুলো ছোট */
+    .table .badge {
+        font-size: 0.6rem !important;
+        padding: 0.2rem 0.4rem !important;
+    }
+
+    /* ------ ফর্ম এলিমেন্ট (সব পেজে) ------ */
+    .form-control, .form-select {
+        font-size: 0.9rem !important;
+        padding: 0.5rem 0.6rem !important;
+        min-height: 44px !important;
+    }
+    .form-label {
+        font-size: 0.85rem !important;
+    }
+    .input-group-sm .form-control,
+    .input-group-sm .form-select {
+        font-size: 0.85rem !important;
+        padding: 0.4rem 0.5rem !important;
+        min-height: 40px !important;
+    }
+    /* ফিল্টার টুলবারের ইনপুট/সিলেক্ট */
+    .card .row.g-2 .col-md-3,
+    .card .row.g-2 .col-md-2 {
+        padding-left: 0.25rem !important;
+        padding-right: 0.25rem !important;
+    }
+    .card .row.g-2 .col-md-3 .form-control,
+    .card .row.g-2 .col-md-2 .form-select {
+        font-size: 0.85rem !important;
+        padding: 0.3rem 0.4rem !important;
+        min-height: 38px !important;
+    }
+    /* ফিল্টার বাটনগুলো ফুল-উইডথ */
+    .card .row.g-2 .col-md-3 .btn,
+    .card .row.g-2 .col-md-3 a.btn {
+        width: 100% !important;
+        margin-bottom: 0.25rem !important;
+    }
+    .card .row.g-2 .col-md-3.d-flex {
+        flex-wrap: wrap !important;
+        gap: 0.25rem !important;
+    }
+    .card .row.g-2 .col-md-3.d-flex .btn {
+        flex: 1 1 45% !important;
+    }
+
+    /* ------ Activities পেজের ফর্ম (col-md-7 ও col-md-5) ------ */
+    .activities-page .col-md-7 .card,
+    .activities-page .col-md-5 .card {
+        margin-bottom: 1rem !important;
+    }
+
+    /* ------ হেডার সাইজ ------ */
+    h5, .h5 {
+        font-size: 1rem !important;
+    }
+    h4, .h4 {
+        font-size: 1.1rem !important;
+    }
+    h3, .h3 {
+        font-size: 1.2rem !important;
+    }
+
+    /* ------ বাটন ------ */
+    .btn {
+        font-size: 0.9rem !important;
+        padding: 0.5rem 1rem !important;
+    }
+    .btn-sm {
+        font-size: 0.8rem !important;
+        padding: 0.3rem 0.6rem !important;
+    }
+
+    /* ------ মডাল ------ */
+    .modal-body {
+        padding: 1rem !important;
+    }
+    .modal-dialog {
+        margin: 0.5rem !important;
+    }
+    .modal-header h5 {
+        font-size: 1rem !important;
+    }
+
+    /* ------ পেজিনেশন ------ */
+    .pagination {
+        flex-wrap: wrap !important;
+        gap: 0.2rem !important;
+    }
+    .pagination .page-link {
+        padding: 0.3rem 0.6rem !important;
+        font-size: 0.75rem !important;
+    }
+
+    /* ------ অ্যালার্ট ------ */
+    .alert {
+        font-size: 0.85rem !important;
+        padding: 0.6rem 0.8rem !important;
+    }
+
+    /* ------ সাইডবার টগল ------ */
+    #sidebar {
+        position: fixed !important;
+        left: -300px !important;
+        transition: 0.3s ease;
+        z-index: 1050;
+        width: 280px !important;
+        min-height: 100vh !important;
+        top: 0;
+        background: rgba(255, 255, 255, 0.6) !important;
+        backdrop-filter: blur(25px) !important;
+        padding: 1rem !important;
+    }
+    #sidebar.show {
+        left: 0 !important;
+    }
+    .sidebar-overlay {
+        display: none;
+        position: fixed;
+        top: 0; left: 0;
+        width: 100%; height: 100%;
+        background: rgba(0,0,0,0.2);
+        z-index: 1049;
+        backdrop-filter: blur(3px);
+    }
+    .sidebar-overlay.active {
+        display: block;
+    }
+    .navbar .btn-toggle-sidebar {
+        display: inline-block !important;
+    }
+    #sidebar .nav-link {
+        font-size: 0.95rem !important;
+        padding: 0.6rem 0.75rem !important;
+    }
+    #sidebar .nav-link i {
+        font-size: 1.2rem !important;
+    }
+
+    /* ------ অফক্যানভাস ফিল্টারের ভেতরের ফর্ম ------ */
+    .offcanvas .form-control,
+    .offcanvas .form-select {
+        font-size: 0.9rem !important;
+        min-height: 44px !important;
+    }
+    .offcanvas .btn {
+        font-size: 0.9rem !important;
+        padding: 0.5rem !important;
+    }
+}
+
+/* ডেস্কটপে সাইডবার ঠিক রাখা */
+@media (min-width: 769px) {
+    #sidebar {
+        position: relative !important;
+        left: 0 !important;
+        width: 260px !important;
+    }
+    .sidebar-overlay {
+        display: none !important;
+    }
+}
+
+/* ড্যাশবোর্ডের কার্ডগুলোর জন্য (৫টি) */
+@media (max-width: 576px) {
+    .dashboard-card .card {
+        padding: 0.5rem !important;
+    }
+    .dashboard-card h6 {
+        font-size: 0.65rem !important;
+    }
+    .dashboard-card h3 {
+        font-size: 1rem !important;
+    }
+}
