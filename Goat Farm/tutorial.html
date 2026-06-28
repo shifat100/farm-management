@@ -1,0 +1,454 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Goat Farm Management – User Guide (English Terms, Bangla Explanation)</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet" />
+    <style>
+        body {
+            background: #f8f9fc;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            padding-bottom: 3rem;
+        }
+        .guide-header {
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: #fff;
+            padding: 2.5rem 0 1.8rem 0;
+            margin-bottom: 2rem;
+            border-bottom: 4px solid #ffc107;
+        }
+        .guide-header h1 {
+            font-weight: 700;
+            letter-spacing: 1px;
+        }
+        .guide-header p {
+            opacity: 0.9;
+            font-size: 1.1rem;
+        }
+        .sidebar-nav {
+            background: #ffffff;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+            padding: 1.2rem 0.8rem;
+            position: sticky;
+            top: 1.5rem;
+        }
+        .sidebar-nav .nav-link {
+            color: #2c3e50;
+            border-radius: 10px;
+            padding: 0.6rem 0.8rem;
+            margin-bottom: 2px;
+            font-weight: 500;
+            transition: all 0.2s;
+        }
+        .sidebar-nav .nav-link:hover {
+            background: #eef2f7;
+            color: #1e3c72;
+        }
+        .sidebar-nav .nav-link i {
+            width: 24px;
+            text-align: center;
+            color: #4a6cf7;
+        }
+        .section-card {
+            background: #ffffff;
+            border-radius: 20px;
+            padding: 1.8rem 2rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 8px 28px rgba(0,0,0,0.04);
+            border: 1px solid #e9edf4;
+            transition: all 0.2s;
+        }
+        .section-card:hover {
+            box-shadow: 0 12px 36px rgba(0,0,0,0.07);
+        }
+        .section-card h3 {
+            color: #1e3c72;
+            font-weight: 700;
+            border-bottom: 3px solid #ffc107;
+            padding-bottom: 0.6rem;
+            margin-bottom: 1.2rem;
+            display: inline-block;
+        }
+        .section-card h5 {
+            color: #2a5298;
+            font-weight: 600;
+            margin-top: 1.2rem;
+        }
+        .step-list {
+            list-style: none;
+            padding-left: 0.2rem;
+        }
+        .step-list li {
+            padding: 0.5rem 0 0.5rem 2rem;
+            position: relative;
+            border-bottom: 1px solid #f0f2f6;
+        }
+        .step-list li:last-child {
+            border-bottom: none;
+        }
+        .step-list li::before {
+            content: "▹";
+            position: absolute;
+            left: 0.2rem;
+            color: #ffc107;
+            font-weight: 700;
+            font-size: 1.2rem;
+        }
+        .badge-feature {
+            background: #eef3ff;
+            color: #1e3c72;
+            font-weight: 500;
+            padding: 0.3rem 0.8rem;
+            border-radius: 30px;
+            font-size: 0.8rem;
+            margin-left: 0.5rem;
+        }
+        .screenshot-mock {
+            background: #f0f4fa;
+            border-radius: 12px;
+            padding: 1rem 1.5rem;
+            border: 1px dashed #b8c9e0;
+            color: #3a5a7a;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            margin: 0.8rem 0;
+        }
+        .footer-note {
+            text-align: center;
+            color: #6c7a8a;
+            border-top: 1px solid #e2e8f0;
+            padding-top: 2rem;
+            margin-top: 1rem;
+        }
+        .eng-term {
+            background: #f0f7ff;
+            padding: 0.1rem 0.4rem;
+            border-radius: 4px;
+            font-weight: 600;
+            color: #004085;
+        }
+        @media (max-width: 768px) {
+            .sidebar-nav {
+                position: relative;
+                top: 0;
+                margin-bottom: 1.8rem;
+            }
+            .guide-header h1 {
+                font-size: 1.8rem;
+            }
+            .section-card {
+                padding: 1.2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!-- HEADER -->
+<div class="guide-header text-center">
+    <div class="container">
+        <i class="bi bi-goat fs-1 text-warning"></i>
+        <h1 class="display-5 fw-bold">🐐 Goat Farm Management Pro</h1>
+        <p class="lead">ইংরেজি টার্ম সহ বাংলায় সম্পূর্ণ ইউজার গাইড – লগইন থেকে শুরু করে সবকিছু</p>
+        <div class="mt-2">
+            <span class="badge bg-warning text-dark px-3 py-2 me-1">🔐 Login</span>
+            <span class="badge bg-light text-dark px-3 py-2 me-1">📋 Animals</span>
+            <span class="badge bg-light text-dark px-3 py-2 me-1">📊 Activities</span>
+            <span class="badge bg-light text-dark px-3 py-2">💰 Finance</span>
+        </div>
+    </div>
+</div>
+
+<div class="container">
+    <div class="row">
+        <!-- সাইডবার (ইংরেজি মেনু নাম) -->
+        <div class="col-lg-3 col-md-4 mb-4">
+            <div class="sidebar-nav">
+                <h6 class="text-uppercase text-muted small fw-bold mb-3 px-2"><i class="bi bi-compass me-1"></i> সূচিপত্র</h6>
+                <nav class="nav flex-column">
+                    <a href="#login" class="nav-link"><i class="bi bi-box-arrow-in-right"></i> Login</a>
+                    <a href="#dashboard" class="nav-link"><i class="bi bi-speedometer2"></i> Dashboard</a>
+                    <a href="#animals" class="nav-link"><i class="bi bi-people"></i> Animals</a>
+                    <a href="#activities" class="nav-link"><i class="bi bi-list-check"></i> Activities</a>
+                    <a href="#finance" class="nav-link"><i class="bi bi-cash-stack"></i> Finance</a>
+                    <a href="#vaccination" class="nav-link"><i class="bi bi-shield-check"></i> Vaccination</a>
+                    <a href="#inventory" class="nav-link"><i class="bi bi-box-seam"></i> Inventory</a>
+                    <a href="#reports" class="nav-link"><i class="bi bi-file-bar-graph"></i> Reports</a>
+                    <a href="#tasks" class="nav-link"><i class="bi bi-clipboard-check"></i> Tasks Board</a>
+                    <a href="#scanner" class="nav-link"><i class="bi bi-qr-code-scan"></i> QR Scanner</a>
+                    <a href="#users" class="nav-link"><i class="bi bi-people-fill"></i> Users</a>
+                    <a href="#backup" class="nav-link"><i class="bi bi-cloud-arrow-down"></i> Backup</a>
+                </nav>
+                <hr />
+                <p class="small text-muted px-2 mb-0"><i class="bi bi-info-circle me-1"></i> ইংরেজি টার্ম দেখে বাংলায় কাজ বুঝুন</p>
+            </div>
+        </div>
+
+        <!-- কন্টেন্ট এরিয়া -->
+        <div class="col-lg-9 col-md-8">
+
+            <!-- ===== LOGIN ===== -->
+            <section id="login" class="section-card">
+                <h3><i class="bi bi-box-arrow-in-right me-2 text-primary"></i> Login</h3>
+                <p>সিস্টেম ব্যবহার করতে প্রথমে আপনার <span class="eng-term">Username</span> ও <span class="eng-term">Password</span> দিন।</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>🔑 লগইন করার ধাপ</h5>
+                        <ul class="step-list">
+                            <li><strong>Username</strong> – ডিফল্ট <code>admin</code> অথবা আপনার তৈরি করা ইউজারনেম লিখুন</li>
+                            <li><strong>Password</strong> – ডিফল্ট <code>password</code> (প্রশাসক চাইলে পরিবর্তন করতে পারেন)</li>
+                            <li><span class="eng-term">Verify Identity</span> বাটনে ক্লিক করুন</li>
+                            <li>সফল লগইনে আপনি <span class="eng-term">Dashboard</span> পেজে চলে যাবেন</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="screenshot-mock">
+                            <i class="bi bi-goat text-warning"></i> <strong>Farm Manager Pro</strong><br />
+                            <span class="text-muted">Secure Sign-On Portal</span><br />
+                            <input class="form-control form-control-sm mt-2" value="admin" disabled />
+                            <input class="form-control form-control-sm mt-1" value="••••••••" disabled />
+                            <button class="btn btn-primary btn-sm mt-2" disabled>Verify Identity</button>
+                            <div class="mt-2 small text-muted">Default: admin / password</div>
+                        </div>
+                    </div>
+                </div>
+                <div class="alert alert-info mt-3">
+                    <i class="bi bi-lightbulb me-2"></i> <strong>টিপ:</strong> প্রশাসক (<span class="eng-term">admin</span>) নতুন ইউজার তৈরি করতে পারেন এবং তাদের <span class="eng-term">Role</span> (ভূমিকা) নির্ধারণ করতে পারেন – <code>worker</code>, <code>manager</code> বা <code>admin</code>।
+                </div>
+            </section>
+
+            <!-- ===== DASHBOARD ===== -->
+            <section id="dashboard" class="section-card">
+                <h3><i class="bi bi-speedometer2 me-2 text-primary"></i> Dashboard</h3>
+                <p>হোম পেজ – খামারের সামগ্রিক অবস্থা এক নজরে দেখুন।</p>
+                <div class="row g-3">
+                    <div class="col-6 col-md-3">
+                        <div class="bg-primary text-white p-3 rounded-3 text-center">
+                            <h6>Active Stocks</h6>
+                            <h3 class="fw-bold">২৪</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="bg-success text-white p-3 rounded-3 text-center">
+                            <h6>Ready for Sale</h6>
+                            <h3 class="fw-bold">৬</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="bg-warning text-dark p-3 rounded-3 text-center">
+                            <h6>Total Kids</h6>
+                            <h3 class="fw-bold">৪</h3>
+                        </div>
+                    </div>
+                    <div class="col-6 col-md-3">
+                        <div class="bg-danger text-white p-3 rounded-3 text-center">
+                            <h6>Sick Animals</h6>
+                            <h3 class="fw-bold">১</h3>
+                        </div>
+                    </div>
+                </div>
+                <h5 class="mt-4">📌 Dashboard-এ কী কী দেখবেন</h5>
+                <ul class="step-list">
+                    <li><strong>Near Expiry Vaccines</strong> – ৩০ দিনের মধ্যে যেসব ভ্যাকসিনের মেয়াদ শেষ হবে, তাদের তালিকা</li>
+                    <li><strong>Animals in Withdrawal</strong> – যেসব পশু এখনো ওষুধের প্রভাবমুক্ত (withdrawal period) সময় পার করেনি</li>
+                    <li><strong>Upcoming Heat Cycles</strong> – আগামী ৭ দিনের মধ্যে মিলনের জন্য প্রস্তুত স্ত্রী পশুদের তালিকা</li>
+                    <li><strong>Breeding Suggestions</strong> – নিরাপদ মিলনের জন্য উপযুক্ত পুরুষ পশুদের স্বয়ংক্রিয় পরামর্শ</li>
+                </ul>
+            </section>
+
+            <!-- ===== ANIMALS ===== -->
+            <section id="animals" class="section-card">
+                <h3><i class="bi bi-people me-2 text-primary"></i> Animals Registry</h3>
+                <p>পশুর সকল তথ্য সংরক্ষণ, সম্পাদনা এবং প্রোফাইল দেখা।</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>➕ নতুন পশু যোগ করতে (Add Animal)</h5>
+                        <ul class="step-list">
+                            <li><span class="eng-term">Add Animal</span> বাটনে ক্লিক করুন</li>
+                            <li><span class="eng-term">Name</span> (নাম), <span class="eng-term">Type</span> (Goat/Buck/Castrated), <span class="eng-term">Breed</span> (জাত), <span class="eng-term">DOB</span> (জন্ম তারিখ), <span class="eng-term">Weight</span> (ওজন) দিন</li>
+                            <li><span class="eng-term">Health Status</span>, <span class="eng-term">Pregnancy Status</span>, <span class="eng-term">Shed</span> (শেড), মা-বাবার তথ্য দিন</li>
+                            <li><span class="eng-term">Photo</span> আপলোড করুন এবং <span class="eng-term">Save</span> করুন</li>
+                            <li>সিস্টেম নিজে থেকে একটি <strong>Auto ID</strong> তৈরি করবে (যেমন c1, p2)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>🔍 প্রোফাইল দেখা ও সম্পাদনা</h5>
+                        <ul class="step-list">
+                            <li>লিস্ট থেকে <strong>👁️ Eye</strong> আইকনে ক্লিক করুন – সম্পূর্ণ <span class="eng-term">Profile</span> দেখুন</li>
+                            <li><strong>✏️ Pencil</strong> আইকনে ক্লিক করে তথ্য পরিবর্তন করুন (Edit)</li>
+                            <li>প্রোফাইলে <span class="eng-term">Weight Trend Chart</span> (ওজন গ্রাফ), <span class="eng-term">Cost & Profit</span> (খরচ-লাভ), Activities ও Vaccines-এর ইতিহাস দেখতে পাবেন</li>
+                            <li><span class="eng-term">Log Weight</span> ও <span class="eng-term">Log Expense</span> বাটন দিয়ে নতুন ডেটা যোগ করুন</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="alert alert-warning mt-2">
+                    <i class="bi bi-tag me-1"></i> <strong>Auto ID-এর নিয়ম:</strong> c = Goat, p = Buck, k = Castrated (যেমন c5, p2)
+                </div>
+            </section>
+
+            <!-- ===== ACTIVITIES ===== -->
+            <section id="activities" class="section-card">
+                <h3><i class="bi bi-list-check me-2 text-primary"></i> Activities Log</h3>
+                <p>পশুর প্রতিটি কাজ বা ঘটনা লিপিবদ্ধ করুন – যেমন খাওয়ানো, টিকাদান, চিকিৎসা, প্রজনন, প্রসব, বিক্রয় ইত্যাদি।</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>📝 অ্যাক্টিভিটি যোগ করা (Log Activity)</h5>
+                        <ul class="step-list">
+                            <li><span class="eng-term">Activity Type</span> – কাজের ধরন বেছে নিন (Feeding, Vaccination, Treatment, Breeding, Sale, Death, Kidding ইত্যাদি)</li>
+                            <li><span class="eng-term">Animal</span> – নির্দিষ্ট পশু নির্বাচন করুন (বা ‘Bulk/Unspecified’)</li>
+                            <li><span class="eng-term">Date</span> – তারিখ দিন</li>
+                            <li><span class="eng-term">Financial Outlay</span> – যদি টাকা জড়িত থাকে (যেমন চিকিৎসা খরচ) তাহলে পরিমাণ দিন</li>
+                            <li><span class="eng-term">Description</span> – সংক্ষিপ্ত বর্ণনা দিন</li>
+                            <li><span class="eng-term">Save Activity</span> বাটনে ক্লিক করুন</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>🧪 বিশেষ ফিচারসমূহ</h5>
+                        <ul class="step-list">
+                            <li><strong>Kidding (প্রসব)</strong> – বাচ্চার সংখ্যা, লিঙ্গ ও ওজন দিয়ে অটো রেজিস্ট্রেশন হয়</li>
+                            <li><strong>Breeding</strong> – বয়স ও ওজন যাচাই করে, প্রেগন্যান্সি এবং হিট সাইকেল আপডেট হয়</li>
+                            <li><strong>Withdrawal Days</strong> – চিকিৎসা বা টিকার পর ওষুধের প্রভাব শেষ হওয়ার দিন গণনা করে</li>
+                            <li><strong>Bulk Operation</strong> – একসাথে একাধিক পশুর জন্য Feeding বা Vaccination লগ করুন</li>
+                            <li><strong>Daily Milk Yield</strong> – দুধ উৎপাদনের পরিমাণ আলাদাভাবে লগ করুন</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== FINANCE ===== -->
+            <section id="finance" class="section-card">
+                <h3><i class="bi bi-cash-stack me-2 text-primary"></i> Finance</h3>
+                <p>সকল আয়-ব্যয়ের হিসাব রাখুন এবং মুনাফা দেখুন।</p>
+                <ul class="step-list">
+                    <li><span class="eng-term">Add Transaction</span> – নতুন আয় (Income) বা ব্যয় (Expense) যোগ করুন</li>
+                    <li>প্রতিটি লেনদেনের জন্য <span class="eng-term">Category</span> (Feed, Medicine, Vaccine, Labor, Sale, Purchase), <span class="eng-term">Amount</span> (পরিমাণ), <span class="eng-term">Date</span> ও <span class="eng-term">Description</span> দিন</li>
+                    <li>নির্দিষ্ট পশুর সাথে সম্পর্কিত লেনদেন করলে সেটি ওই পশুর খরচ/লাভের হিসাবে যুক্ত হবে</li>
+                    <li>নিচের <span class="eng-term">Monthly Cashflow Chart</span> আয়-ব্যয়ের প্রবণতা দেখায়</li>
+                    <li>ডানপাশে <span class="eng-term">Total Income, Total Expense ও Net Capital</span> প্রদর্শিত হয়</li>
+                </ul>
+                <div class="screenshot-mock mt-2">
+                    📊 Monthly Cashflow Chart (Income vs Expense)
+                </div>
+            </section>
+
+            <!-- ===== VACCINATION ===== -->
+            <section id="vaccination" class="section-card">
+                <h3><i class="bi bi-shield-check me-2 text-primary"></i> Vaccination</h3>
+                <p>টিকার তালিকা, শিডিউল এবং সম্পন্নকরণ ট্র্যাক করুন।</p>
+                <div class="row">
+                    <div class="col-md-6">
+                        <h5>💉 নতুন ভ্যাকসিন শিডিউল করা (Schedule)</h5>
+                        <ul class="step-list">
+                            <li><span class="eng-term">Schedule</span> বাটনে ক্লিক করে পশু ও ভ্যাকসিন নির্বাচন করুন</li>
+                            <li><span class="eng-term">Due Date</span> দিন এবং সংরক্ষণ করুন</li>
+                            <li>ভ্যাকসিন দেওয়ার পর <span class="eng-term">Complete</span> বাটনে ক্লিক করলে তা সম্পন্ন হবে</li>
+                            <li>স্বয়ংক্রিয়ভাবে <span class="eng-term">Animal Cost</span> ও <span class="eng-term">Transaction</span> যুক্ত হয় (প্রতি ভ্যাকসিনের জন্য ১০ ডলার ডিফল্ট)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5>⚙️ কাস্টম ভ্যাকসিন রুল (Add Custom Vaccine)</h5>
+                        <ul class="step-list">
+                            <li><span class="eng-term">Add Custom Vaccine</span> – নতুন ভ্যাকসিনের নাম, প্রস্তাবিত বয়স (months) এবং পুনরাবৃত্তি মাস দিন</li>
+                            <li>সিস্টেম অটো শিডিউল তৈরি করবে এবং <span class="eng-term">Automation</span> চালাবে</li>
+                            <li>ডান পাশে <span class="eng-term">Vaccine Rules</span> টেবিলে সব ভ্যাকসিনের তালিকা দেখতে পাবেন</li>
+                        </ul>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ===== INVENTORY ===== -->
+            <section id="inventory" class="section-card">
+                <h3><i class="bi bi-box-seam me-2 text-primary"></i> Inventory</h3>
+                <p>ভ্যাকসিন স্টক এবং ফিড ব্যবহারের হিসাব রাখুন।</p>
+                <h5>🧬 Vaccine Stock</h5>
+                <ul class="step-list">
+                    <li>ভ্যাকসিনের <span class="eng-term">Batch Number</span>, <span class="eng-term">Quantity</span> ও <span class="eng-term">Expiry Date</span> দিন – তারপর <span class="eng-term">Add Stock</span> করুন</li>
+                    <li>মেয়াদ শেষ হওয়ার ৩০ দিন আগে <span class="badge bg-danger">Near Expiry</span> সতর্কতা দেখাবে</li>
+                </ul>
+                <h5>🌿 Feed Consumption Tracker</h5>
+                <ul class="step-list">
+                    <li><span class="eng-term">Shed</span> নির্বাচন করুন, <span class="eng-term">Feed Type</span> (Green Grass, Concentrate Mix, UMS) ও <span class="eng-term">Quantity (kg)</span> দিন</li>
+                    <li><span class="eng-term">DLS Smart Diet Planner</span> – কোনো শেড নির্বাচন করলে সেই শেডের মোট ওজন ভিত্তিতে দৈনিক ফিডের পরিমাণ ক্যালকুলেট করে দেখায়</li>
+                    <li><span class="text-danger">UMS</span> ফিড ৬ মাসের কম বয়সী বাচ্চা থাকলে সতর্কতা দেখায়</li>
+                </ul>
+            </section>
+
+            <!-- ===== REPORTS ===== -->
+            <section id="reports" class="section-card">
+                <h3><i class="bi bi-file-bar-graph me-2 text-primary"></i> Reports</h3>
+                <p>প্রতিটি পশুর খরচ, বিক্রয়মূল্য এবং মুনাফা দেখুন।</p>
+                <ul class="step-list">
+                    <li>লিস্টে প্রতিটি পশুর <span class="eng-term">Total Cost</span>, <span class="eng-term">Market Value</span>, <span class="eng-term">Profit</span> ও <span class="eng-term">Min Sell</span> (ন্যূনতম বিক্রয়মূল্য) দেখায়</li>
+                    <li><span class="eng-term">Export CSV</span> বাটনে ক্লিক করে ফিল্টার অনুযায়ী ডেটা এক্সপোর্ট করুন</li>
+                    <li><span class="eng-term">Print</span> বাটন দিয়ে রিপোর্ট প্রিন্ট বা পিডিএফ সেভ করুন</li>
+                </ul>
+            </section>
+
+            <!-- ===== TASKS BOARD ===== -->
+            <section id="tasks" class="section-card">
+                <h3><i class="bi bi-clipboard-check me-2 text-primary"></i> Tasks Board</h3>
+                <p>কর্মীদের জন্য কাজ বরাদ্দ করুন এবং অগ্রগতি ট্র্যাক করুন।</p>
+                <ul class="step-list">
+                    <li><span class="eng-term">Assign Farm Chore</span> – কাজের শিরোনাম, কর্মী (Assign Worker), শেষ তারিখ (Due Date) ও নির্দেশনা দিন</li>
+                    <li>কর্মী তার নিজের অ্যাসাইন করা কাজ দেখতে পান এবং <span class="eng-term">Complete</span> বাটন দিয়ে সম্পন্ন করতে পারেন</li>
+                    <li><strong>Role ভিত্তিক অ্যাক্সেস:</strong> শুধু manager ও admin টাস্ক তৈরি করতে পারে, worker শুধু নিজের কাজ সম্পন্ন করতে পারে</li>
+                    <li>কাজের স্ট্যাটাস <span class="badge bg-warning">Pending</span> বা <span class="badge bg-success">Completed</span> দেখায়</li>
+                </ul>
+            </section>
+
+            <!-- ===== QR SCANNER ===== -->
+            <section id="scanner" class="section-card">
+                <h3><i class="bi bi-qr-code-scan me-2 text-primary"></i> QR Scanner</h3>
+                <p>পশুর কানের ট্যাগে লাগানো QR কোড স্ক্যান করে সরাসরি প্রোফাইলে যান।</p>
+                <ul class="step-list">
+                    <li>পশুর প্রোফাইলে থাকা <strong>QR Code</strong> প্রিন্ট করে কানের ট্যাগে লাগান</li>
+                    <li><span class="eng-term">QR Scanner</span> পেজে ক্যামেরা দিয়ে কোড স্ক্যান করুন</li>
+                    <li>স্বয়ংক্রিয়ভাবে ওই পশুর <strong>Profile Page</strong> খুলে যাবে</li>
+                    <li>পাবলিক প্রোফাইল লিংক (যেমন <code>?page=public_profile&id=5</code>) স্ক্যান করলেও কাজ করে</li>
+                </ul>
+                <div class="screenshot-mock">
+                    <i class="bi bi-camera-fill me-2"></i> Scan QR code to view animal profile
+                </div>
+            </section>
+
+            <!-- ===== USERS MANAGEMENT ===== -->
+            <section id="users" class="section-card">
+                <h3><i class="bi bi-people-fill me-2 text-primary"></i> Users Management</h3>
+                <p>শুধুমাত্র <strong>প্রশাসক (admin)</strong> এই অংশটি দেখতে ও ব্যবহার করতে পারেন।</p>
+                <ul class="step-list">
+                    <li><span class="eng-term">Deploy Access Key Credentials</span> – নতুন ইউজারের <span class="eng-term">Username</span>, <span class="eng-term">Password</span> ও <span class="eng-term">Role</span> (worker/manager/admin) দিন</li>
+                    <li>লিস্টে সব ইউজার দেখা যায় – নিজের ছাড়া অন্যদের <span class="eng-term">Revoke</span> বাটন দিয়ে মুছে ফেলা যায়</li>
+                    <li>পাসওয়ার্ড <code>password_hash()</code> দিয়ে এনক্রিপ্ট করা হয়</li>
+                </ul>
+            </section>
+
+            <!-- ===== BACKUP ===== -->
+            <section id="backup" class="section-card">
+                <h3><i class="bi bi-cloud-arrow-down me-2 text-primary"></i> Database Backup</h3>
+                <p>পুরো ডেটাবেসের SQL ডাম্প ডাউনলোড করুন – শুধুমাত্র admin পারবেন।</p>
+                <ul class="step-list">
+                    <li><span class="eng-term">Download SQL Database Dump</span> বাটনে ক্লিক করলে একটি <code>.sql</code> ফাইল ডাউনলোড হবে</li>
+                    <li>এতে সকল টেবিলের ডেটা ও স্ট্রাকচার থাকে</li>
+                    <li>বিপর্যয় পরিস্থিতিতে ডেটাবেস পুনরুদ্ধারের জন্য সংরক্ষণ করুন</li>
+                </ul>
+                <div class="alert alert-danger mt-2">
+                    <i class="bi bi-exclamation-triangle me-2"></i> <strong>সতর্কতা:</strong> ব্যাকআপ ফাইলে সংবেদনশীল তথ্য থাকে – নিরাপদ স্থানে রাখুন।
+                </div>
+            </section>
+
+            <!-- শেষ -->
+            <div class="footer-note">
+                <i class="bi bi-goat text-warning"></i> Goat Farm Management Pro – আপনার ডিজিটাল ফার্ম সহায়ক<br />
+                <span class="text-muted small">ইংরেজি টার্মগুলোর সাথে বাংলায় বিস্তারিত কাজ শিখুন এবং আত্মবিশ্বাসের সাথে অ্যাপ্লিকেশনটি ব্যবহার করুন</span>
+            </div>
+
+        </div><!-- /কন্টেন্ট -->
+    </div><!-- /রো -->
+</div><!-- /কন্টেইনার -->
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
