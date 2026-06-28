@@ -1,0 +1,3526 @@
+<!DOCTYPE html>
+<html lang="en" data-bs-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+    <title>Goat Farm Manager Pro</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+    <style>
+        /* ===== GLASSMORPHISM THEME ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%) !important;
+            min-height: 100vh;
+            min-height: 100dvh;
+            background-attachment: fixed;
+        }
+        [data-bs-theme="dark"] body {
+            background: linear-gradient(135deg, #0b0e17 0%, #1a1f2e 100%) !important;
+        }
+        #wrapper {
+            overflow-x: hidden;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+        /* Sidebar */
+        #sidebar {
+            background: rgba(255, 255, 255, 0.25) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.4) !important;
+            color: #1a1a2e !important;
+            width: 260px;
+            min-height: 100vh;
+            min-height: 100dvh;
+            padding: 1rem;
+            transition: all 0.3s ease;
+            position: relative;
+            z-index: 1050;
+            flex-shrink: 0;
+        }
+        [data-bs-theme="dark"] #sidebar {
+            background: rgba(11, 14, 23, 0.7) !important;
+            border-right: 1px solid rgba(255, 255, 255, 0.06) !important;
+            color: #e8edff !important;
+        }
+        #sidebar .nav-link {
+            color: #1a1a2e !important;
+            border-radius: 8px;
+            padding: 0.6rem 0.75rem;
+            margin-bottom: 2px;
+            transition: all 0.2s;
+        }
+        [data-bs-theme="dark"] #sidebar .nav-link {
+            color: #e8edff !important;
+        }
+        #sidebar .nav-link:hover {
+            background: rgba(0, 0, 0, 0.05) !important;
+        }
+        [data-bs-theme="dark"] #sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.05) !important;
+        }
+        #sidebar .nav-link.active {
+            background: rgba(0, 0, 0, 0.08) !important;
+            font-weight: 600;
+        }
+        [data-bs-theme="dark"] #sidebar .nav-link.active {
+            background: rgba(74, 108, 247, 0.15) !important;
+        }
+        .sidebar-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.2);
+            z-index: 1049;
+            backdrop-filter: blur(3px);
+        }
+        .sidebar-overlay.active {
+            display: block;
+        }
+        .btn-toggle-sidebar {
+            display: none !important;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+            min-height: 100dvh;
+        }
+        .navbar-custom {
+            background: rgba(255, 255, 255, 0.3) !important;
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.4) !important;
+            padding: 0.5rem 1rem;
+        }
+        [data-bs-theme="dark"] .navbar-custom {
+            background: rgba(11, 14, 23, 0.5) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+        }
+        .navbar-custom .navbar-brand {
+            color: #1a1a2e !important;
+            font-weight: 600;
+        }
+        [data-bs-theme="dark"] .navbar-custom .navbar-brand {
+            color: #e8edff !important;
+        }
+        .content-area {
+            flex: 1;
+            padding: 1.25rem;
+            overflow-y: auto;
+        }
+
+        /* Cards & Glass */
+        .card,
+        .bg-white,
+        .shadow-sm,
+        .rounded,
+        .table-responsive,
+        .offcanvas,
+        .modal-content {
+            background: rgba(255, 255, 255, 0.35) !important;
+            backdrop-filter: blur(20px) !important;
+            -webkit-backdrop-filter: blur(20px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
+            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.15) !important;
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .card,
+        [data-bs-theme="dark"] .bg-white,
+        [data-bs-theme="dark"] .shadow-sm,
+        [data-bs-theme="dark"] .rounded,
+        [data-bs-theme="dark"] .table-responsive,
+        [data-bs-theme="dark"] .offcanvas,
+        [data-bs-theme="dark"] .modal-content {
+            background: rgba(11, 14, 23, 0.6) !important;
+            border: 1px solid rgba(255, 255, 255, 0.06) !important;
+            color: #e8edff !important;
+        }
+        .card-header {
+            background: rgba(255, 255, 255, 0.25) !important;
+            backdrop-filter: blur(15px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.3) !important;
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .card-header {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+            color: #e8edff !important;
+        }
+        .card-header i {
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .card-header i {
+            color: #e8edff !important;
+        }
+
+        /* Table */
+        .table {
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .table {
+            color: #e8edff !important;
+        }
+        .table-dark {
+            background: rgba(0, 0, 0, 0.08) !important;
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .table-dark {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: #e8edff !important;
+        }
+        .table td,
+        .table th {
+            border-color: rgba(0, 0, 0, 0.08) !important;
+        }
+        [data-bs-theme="dark"] .table td,
+        [data-bs-theme="dark"] .table th {
+            border-color: rgba(255, 255, 255, 0.06) !important;
+        }
+        .table-hover tbody tr:hover {
+            background: rgba(0, 0, 0, 0.03) !important;
+        }
+        [data-bs-theme="dark"] .table-hover tbody tr:hover {
+            background: rgba(255, 255, 255, 0.03) !important;
+        }
+
+        /* Form */
+        .form-control,
+        .form-select,
+        .input-group-text {
+            background: rgba(255, 255, 255, 0.5) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .form-control,
+        [data-bs-theme="dark"] .form-select,
+        [data-bs-theme="dark"] .input-group-text {
+            background: rgba(255, 255, 255, 0.05) !important;
+            border: 1px solid rgba(255, 255, 255, 0.08) !important;
+            color: #e8edff !important;
+        }
+        .form-control::placeholder {
+            color: rgba(0, 0, 0, 0.4) !important;
+        }
+        [data-bs-theme="dark"] .form-control::placeholder {
+            color: rgba(255, 255, 255, 0.3) !important;
+        }
+        .form-control:focus,
+        .form-select:focus {
+            background: rgba(255, 255, 255, 0.7) !important;
+            border-color: #4a6cf7 !important;
+            box-shadow: 0 0 0 0.25rem rgba(74, 108, 247, 0.2) !important;
+        }
+        [data-bs-theme="dark"] .form-control:focus,
+        [data-bs-theme="dark"] .form-select:focus {
+            background: rgba(255, 255, 255, 0.1) !important;
+        }
+        .form-label {
+            color: #1a1a2e !important;
+            font-weight: 500;
+        }
+        [data-bs-theme="dark"] .form-label {
+            color: #e8edff !important;
+        }
+
+        /* Buttons */
+        .btn-primary {
+            background: rgba(74, 108, 247, 0.2) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(74, 108, 247, 0.3) !important;
+            color: #1a1a2e !important;
+        }
+        .btn-primary:hover {
+            background: rgba(74, 108, 247, 0.35) !important;
+        }
+        [data-bs-theme="dark"] .btn-primary {
+            color: #e8edff !important;
+        }
+        .btn-success {
+            background: rgba(46, 204, 113, 0.2) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(46, 204, 113, 0.3) !important;
+            color: #1a1a2e !important;
+        }
+        .btn-success:hover {
+            background: rgba(46, 204, 113, 0.35) !important;
+        }
+        [data-bs-theme="dark"] .btn-success {
+            color: #e8edff !important;
+        }
+        .btn-danger {
+            background: rgba(231, 76, 60, 0.2) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(231, 76, 60, 0.3) !important;
+            color: #1a1a2e !important;
+        }
+        .btn-danger:hover {
+            background: rgba(231, 76, 60, 0.35) !important;
+        }
+        [data-bs-theme="dark"] .btn-danger {
+            color: #e8edff !important;
+        }
+        .btn-warning {
+            background: rgba(241, 196, 15, 0.2) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(241, 196, 15, 0.3) !important;
+            color: #1a1a2e !important;
+        }
+        .btn-warning:hover {
+            background: rgba(241, 196, 15, 0.35) !important;
+        }
+        .btn-info {
+            background: rgba(23, 162, 184, 0.2) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(23, 162, 184, 0.3) !important;
+            color: #1a1a2e !important;
+        }
+        .btn-info:hover {
+            background: rgba(23, 162, 184, 0.35) !important;
+        }
+        [data-bs-theme="dark"] .btn-info {
+            color: #e8edff !important;
+        }
+
+        /* Badges */
+        .badge {
+            background: rgba(0, 0, 0, 0.08) !important;
+            backdrop-filter: blur(5px);
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .badge {
+            background: rgba(255, 255, 255, 0.08) !important;
+            color: #e8edff !important;
+        }
+        .badge.bg-success {
+            background: rgba(46, 204, 113, 0.3) !important;
+        }
+        .badge.bg-danger {
+            background: rgba(231, 76, 60, 0.3) !important;
+        }
+        .badge.bg-warning {
+            background: rgba(241, 196, 15, 0.3) !important;
+        }
+        .badge.bg-info {
+            background: rgba(23, 162, 184, 0.3) !important;
+        }
+        .badge.bg-secondary {
+            background: rgba(108, 117, 125, 0.3) !important;
+        }
+
+        /* Alerts */
+        .alert {
+            background: rgba(255, 255, 255, 0.4) !important;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.5) !important;
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .alert {
+            background: rgba(255, 255, 255, 0.05) !important;
+            color: #e8edff !important;
+        }
+        .alert-danger {
+            background: rgba(231, 76, 60, 0.15) !important;
+        }
+        .alert-success {
+            background: rgba(46, 204, 113, 0.15) !important;
+        }
+        .alert-warning {
+            background: rgba(241, 196, 15, 0.15) !important;
+            color: #000 !important;
+        }
+        [data-bs-theme="dark"] .alert-warning {
+            color: #e8edff !important;
+        }
+
+        /* Modal */
+        .modal-content {
+            background: rgba(255, 255, 255, 0.5) !important;
+            backdrop-filter: blur(30px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .modal-content {
+            background: rgba(11, 14, 23, 0.8) !important;
+            border: 1px solid rgba(255, 255, 255, 0.06) !important;
+            color: #e8edff !important;
+        }
+        .modal-header,
+        .modal-footer {
+            border-color: rgba(0, 0, 0, 0.05) !important;
+        }
+        [data-bs-theme="dark"] .modal-header,
+        [data-bs-theme="dark"] .modal-footer {
+            border-color: rgba(255, 255, 255, 0.06) !important;
+        }
+
+        /* Text */
+        .text-muted {
+            color: rgba(0, 0, 0, 0.5) !important;
+        }
+        [data-bs-theme="dark"] .text-muted {
+            color: rgba(255, 255, 255, 0.4) !important;
+        }
+        .text-dark {
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .text-dark {
+            color: #e8edff !important;
+        }
+        a,
+        .nav-link {
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] a,
+        [data-bs-theme="dark"] .nav-link {
+            color: #e8edff !important;
+        }
+        a:hover,
+        .nav-link:hover {
+            color: #4a6cf7 !important;
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.05);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(0, 0, 0, 0.15);
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: rgba(0, 0, 0, 0.25);
+        }
+        [data-bs-theme="dark"] ::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.03);
+        }
+        [data-bs-theme="dark"] ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        [data-bs-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+            background: rgba(255, 255, 255, 0.2);
+        }
+
+        /* Page specific */
+        .page-section {
+            display: none;
+        }
+        .page-section.active {
+            display: block;
+        }
+
+        /* Dashboard cards */
+        .dashboard-card .card {
+            padding: 0.75rem !important;
+            min-height: 80px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+        }
+        .dashboard-card h6 {
+            font-size: 0.8rem;
+            opacity: 0.8;
+            margin-bottom: 2px;
+        }
+        .dashboard-card h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .btn-toggle-sidebar {
+                display: inline-block !important;
+            }
+            #sidebar {
+                position: fixed !important;
+                left: -300px !important;
+                width: 280px !important;
+                min-height: 100vh !important;
+                top: 0;
+                z-index: 1050;
+                background: rgba(255, 255, 255, 0.6) !important;
+                backdrop-filter: blur(25px) !important;
+                padding: 1rem !important;
+            }
+            #sidebar.show {
+                left: 0 !important;
+            }
+            .content-area {
+                padding: 0.75rem !important;
+            }
+            .table {
+                font-size: 0.75rem !important;
+            }
+            .table th,
+            .table td {
+                padding: 0.3rem 0.3rem !important;
+                white-space: nowrap;
+            }
+            .form-control,
+            .form-select {
+                font-size: 0.9rem !important;
+                min-height: 44px !important;
+            }
+            .dashboard-card .card {
+                padding: 0.5rem !important;
+                min-height: 60px;
+            }
+            .dashboard-card h6 {
+                font-size: 0.65rem !important;
+            }
+            .dashboard-card h3 {
+                font-size: 1rem !important;
+            }
+            .container-fluid {
+                padding-left: 0.5rem !important;
+                padding-right: 0.5rem !important;
+            }
+            .row>[class*="col-"] {
+                padding-left: 0.4rem !important;
+                padding-right: 0.4rem !important;
+            }
+            .modal-dialog {
+                margin: 0.5rem !important;
+            }
+            .pagination {
+                flex-wrap: wrap !important;
+                gap: 0.2rem !important;
+            }
+            .pagination .page-link {
+                padding: 0.3rem 0.6rem !important;
+                font-size: 0.75rem !important;
+            }
+        }
+        @media (min-width: 769px) {
+            #sidebar {
+                position: relative !important;
+                left: 0 !important;
+                width: 260px !important;
+            }
+            .sidebar-overlay {
+                display: none !important;
+            }
+        }
+
+        /* QR Scanner */
+        #qr-reader {
+            width: 100%;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+        #qr-reader video {
+            border-radius: 12px;
+        }
+
+        /* Misc */
+        .border-left-danger {
+            border-left: 4px solid #dc3545 !important;
+        }
+        .border-left-warning {
+            border-left: 4px solid #ffc107 !important;
+        }
+        .border-left-success {
+            border-left: 4px solid #28a745 !important;
+        }
+        .table-warning td {
+            background: rgba(255, 193, 7, 0.1) !important;
+        }
+        [data-bs-theme="dark"] .table-warning td {
+            background: rgba(255, 193, 7, 0.05) !important;
+        }
+        .console-output {
+            background: rgba(0, 0, 0, 0.03) !important;
+            border: 1px solid rgba(0, 0, 0, 0.1) !important;
+            border-radius: 8px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            padding: 12px;
+            width: 100%;
+            height: 150px;
+            resize: none;
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .console-output {
+            background: rgba(0, 0, 0, 0.3) !important;
+            border-color: rgba(255, 255, 255, 0.06) !important;
+            color: #b0c4ff !important;
+        }
+        .offcanvas {
+            background: rgba(255, 255, 255, 0.5) !important;
+            backdrop-filter: blur(30px) !important;
+            border: 1px solid rgba(255, 255, 255, 0.6) !important;
+            color: #1a1a2e !important;
+        }
+        [data-bs-theme="dark"] .offcanvas {
+            background: rgba(11, 14, 23, 0.8) !important;
+            border: 1px solid rgba(255, 255, 255, 0.06) !important;
+            color: #e8edff !important;
+        }
+        .offcanvas-header {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.05) !important;
+        }
+        [data-bs-theme="dark"] .offcanvas-header {
+            border-bottom: 1px solid rgba(255, 255, 255, 0.06) !important;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- ===== SIDEBAR OVERLAY (mobile) ===== -->
+    <div class="sidebar-overlay" onclick="toggleSidebar()"></div>
+
+    <!-- ===== WRAPPER ===== -->
+    <div class="d-flex" id="wrapper">
+
+        <!-- ===== SIDEBAR ===== -->
+        <div id="sidebar" class="d-flex flex-column">
+            <div class="text-center mb-3">
+                <i class="bi bi-goat fs-1 text-primary"></i>
+                <h5 class="mt-1 text-uppercase fw-bold" style="font-size:0.9rem;">Farm Management</h5>
+            </div>
+            <nav class="nav flex-column mb-auto" id="sidebarNav">
+                <a class="nav-link" data-page="dashboard" href="#"><i class="bi bi-speedometer2 me-2"></i>Dashboard</a>
+                <a class="nav-link" data-page="animals" href="#"><i class="bi bi-people me-2"></i>Animals</a>
+                <a class="nav-link" data-page="activities" href="#"><i class="bi bi-list-check me-2"></i>Activities</a>
+                <a class="nav-link" data-page="finance" href="#"><i class="bi bi-cash-stack me-2"></i>Finance</a>
+                <a class="nav-link" data-page="vaccination" href="#"><i class="bi bi-shield-check me-2"></i>Vaccination</a>
+                <a class="nav-link" data-page="reports" href="#"><i class="bi bi-file-bar-graph me-2"></i>Reports</a>
+                <a class="nav-link" data-page="inventory" href="#"><i class="bi bi-box-seam me-2"></i>Inventory</a>
+                <a class="nav-link" data-page="tasks" href="#"><i class="bi bi-clipboard-check me-2"></i>Tasks Board</a>
+                <a class="nav-link" data-page="scanner" href="#"><i class="bi bi-qr-code-scan me-2"></i>QR Scanner</a>
+                <a class="nav-link" data-page="users" href="#" id="usersNavLink"><i class="bi bi-people-fill me-2"></i>Users</a>
+            </nav>
+            <div class="pt-3 border-top" style="border-color:rgba(0,0,0,0.1)!important;">
+                <div class="d-flex align-items-center justify-content-between mb-2">
+                    <span class="small text-muted"><i class="bi bi-circle-fill text-success" id="networkDot"></i> <span id="networkText">Online</span></span>
+                    <div class="form-check form-switch">
+                        <input class="form-check-input" type="checkbox" id="darkModeToggle">
+                        <label class="form-check-label small" for="darkModeToggle">Dark</label>
+                    </div>
+                </div>
+                <button class="btn btn-danger btn-sm w-100" onclick="logout()"><i class="bi bi-box-arrow-left"></i> Logout <span id="userBadge"></span></button>
+            </div>
+        </div>
+
+        <!-- ===== MAIN CONTENT ===== -->
+        <div class="main-content">
+
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand navbar-custom">
+                <div class="container-fluid">
+                    <button class="btn btn-toggle-sidebar me-2" type="button" onclick="toggleSidebar()">
+                        <i class="bi bi-list fs-4"></i>
+                    </button>
+                    <span class="navbar-brand mb-0 h5" id="pageTitle"><i class="bi bi-house me-2"></i>Dashboard</span>
+                    <button class="btn btn-light btn-sm" type="button" data-bs-toggle="offcanvas" data-bs-target="#filterCanvas">
+                        <i class="bi bi-funnel"></i> Filters
+                    </button>
+                </div>
+            </nav>
+
+            <!-- Filter Offcanvas -->
+            <div class="offcanvas offcanvas-end" id="filterCanvas">
+                <div class="offcanvas-header border-bottom">
+                    <h5><i class="bi bi-funnel-fill me-2"></i>Advanced Filters</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button>
+                </div>
+                <div class="offcanvas-body">
+                    <form id="filterForm" onsubmit="applyFilters(event)">
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Type</label>
+                            <select name="type" class="form-select">
+                                <option value="">All Types</option>
+                                <option value="Goat">Goat</option>
+                                <option value="Buck">Buck</option>
+                                <option value="Castrated">Castrated</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Breed</label>
+                            <input name="breed" class="form-control" placeholder="Search breed...">
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Health Status</label>
+                            <select name="health_status" class="form-select">
+                                <option value="">All</option>
+                                <option value="Healthy">Healthy</option>
+                                <option value="Sick">Sick</option>
+                                <option value="Critical">Critical</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Vaccination Status</label>
+                            <select name="vaccination_status" class="form-select">
+                                <option value="">All</option>
+                                <option value="Complete">Complete</option>
+                                <option value="Pending">Pending</option>
+                                <option value="Overdue">Overdue</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Pregnancy Status</label>
+                            <select name="pregnancy_status" class="form-select">
+                                <option value="">All</option>
+                                <option value="Pregnant">Pregnant</option>
+                                <option value="Not Pregnant">Not Pregnant</option>
+                            </select>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col"><label class="form-label small mb-1">Weight Min</label><input type="number" step="0.1" name="weight_min" class="form-control"></div>
+                            <div class="col"><label class="form-label small mb-1">Max</label><input type="number" step="0.1" name="weight_max" class="form-control"></div>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col"><label class="form-label small mb-1">Age Min (m)</label><input type="number" name="age_min" class="form-control"></div>
+                            <div class="col"><label class="form-label small mb-1">Max</label><input type="number" name="age_max" class="form-control"></div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Sale Readiness</label>
+                            <select name="sale_readiness" class="form-select">
+                                <option value="">All</option>
+                                <option value="Ready">Ready</option>
+                                <option value="Not Ready">Not Ready</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Status</label>
+                            <select name="status" class="form-select">
+                                <option value="">All</option>
+                                <option value="Active">Active</option>
+                                <option value="Sold">Sold</option>
+                                <option value="Dead">Dead</option>
+                            </select>
+                        </div>
+                        <div class="row mb-2">
+                            <div class="col"><label class="form-label small mb-1">Date From</label><input type="date" name="date_from" class="form-control"></div>
+                            <div class="col"><label class="form-label small mb-1">To</label><input type="date" name="date_to" class="form-control"></div>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small mb-1">Shed</label>
+                            <select name="shed_id" class="form-select" id="filterShedSelect">
+                                <option value="">All Sheds</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary w-100 mb-2"><i class="bi bi-search"></i> Apply Filters</button>
+                        <button type="button" class="btn btn-secondary w-100" onclick="clearFilters()"><i class="bi bi-x-circle"></i> Clear Filters</button>
+                    </form>
+                </div>
+            </div>
+
+            <!-- ===== CONTENT AREA ===== -->
+            <div class="content-area" id="contentArea">
+
+                <!-- DASHBOARD -->
+                <div class="page-section active" id="page-dashboard">
+                    <div id="dashboardContent"></div>
+                </div>
+
+                <!-- ANIMALS -->
+                <div class="page-section" id="page-animals">
+                    <div id="animalsContent"></div>
+                </div>
+
+                <!-- ACTIVITIES -->
+                <div class="page-section" id="page-activities">
+                    <div id="activitiesContent"></div>
+                </div>
+
+                <!-- FINANCE -->
+                <div class="page-section" id="page-finance">
+                    <div id="financeContent"></div>
+                </div>
+
+                <!-- VACCINATION -->
+                <div class="page-section" id="page-vaccination">
+                    <div id="vaccinationContent"></div>
+                </div>
+
+                <!-- REPORTS -->
+                <div class="page-section" id="page-reports">
+                    <div id="reportsContent"></div>
+                </div>
+
+                <!-- INVENTORY -->
+                <div class="page-section" id="page-inventory">
+                    <div id="inventoryContent"></div>
+                </div>
+
+                <!-- TASKS -->
+                <div class="page-section" id="page-tasks">
+                    <div id="tasksContent"></div>
+                </div>
+
+                <!-- SCANNER -->
+                <div class="page-section" id="page-scanner">
+                    <div id="scannerContent"></div>
+                </div>
+
+                <!-- USERS -->
+                <div class="page-section" id="page-users">
+                    <div id="usersContent"></div>
+                </div>
+
+                <!-- ANIMAL PROFILE (dynamic sub-page) -->
+                <div class="page-section" id="page-animal_profile">
+                    <div id="animalProfileContent"></div>
+                </div>
+
+                <!-- ANIMAL FORM (add/edit) -->
+                <div class="page-section" id="page-animal_form">
+                    <div id="animalFormContent"></div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== MODALS ===== -->
+    <!-- Activity Modal -->
+    <div class="modal fade" id="activityModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-gear-wide-connected me-2"></i>Log Activity</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body" id="activityModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Animal Form Modal (for quick add) -->
+    <div class="modal fade" id="animalFormModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Add Animal</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body" id="animalFormModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Transaction Modal -->
+    <div class="modal fade" id="transModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-wallet2 me-2"></i>Add Transaction</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body" id="transModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Schedule Vaccination Modal -->
+    <div class="modal fade" id="schedModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-calendar-plus me-2"></i>Schedule Vaccination</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body" id="schedModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bulk Modal -->
+    <div class="modal fade" id="bulkModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-layers-half me-2"></i>Batch Processing</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body" id="bulkModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Weight Modal -->
+    <div class="modal fade" id="weightModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Log Weight</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body" id="weightModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Profile Cost Modal -->
+    <div class="modal fade" id="profileCostModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header"><h5 class="modal-title"><i class="bi bi-plus-circle me-2"></i>Log Expense</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+                <div class="modal-body" id="profileCostModalBody"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== SCRIPTS ===== -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // ============================================================
+        // GOAT FARM MANAGER — Full JavaScript + IndexedDB Implementation
+        // ============================================================
+
+        // ---- GLOBALS ----
+        let currentUser = null;
+        let currentPage = 'dashboard';
+        let currentAnimalId = null;
+        let db = null;
+        let dbReady = false;
+        let filterState = {};
+        let qrScannerInstance = null;
+
+        // ---- INDEXEDDB ----
+        const DB_NAME = 'GoatFarmDB';
+        const DB_VERSION = 3;
+
+        function openDB() {
+            return new Promise((resolve, reject) => {
+                const req = indexedDB.open(DB_NAME, DB_VERSION);
+                req.onupgradeneeded = (e) => {
+                    const d = e.target.result;
+                    // Users
+                    if (!d.objectStoreNames.contains('users')) {
+                        const us = d.createObjectStore('users', { keyPath: 'id', autoIncrement: true });
+                        us.createIndex('username', 'username', { unique: true });
+                    }
+                    // Sheds
+                    if (!d.objectStoreNames.contains('sheds')) {
+                        const ss = d.createObjectStore('sheds', { keyPath: 'id', autoIncrement: true });
+                        ss.createIndex('name', 'name');
+                    }
+                    // Animals
+                    if (!d.objectStoreNames.contains('animals')) {
+                        const as = d.createObjectStore('animals', { keyPath: 'id', autoIncrement: true });
+                        as.createIndex('auto_id', 'auto_id', { unique: true });
+                        as.createIndex('status', 'status');
+                        as.createIndex('type', 'type');
+                        as.createIndex('health_status', 'health_status');
+                        as.createIndex('shed_id', 'shed_id');
+                        as.createIndex('mother_id', 'mother_id');
+                        as.createIndex('father_id', 'father_id');
+                    }
+                    // Animal Costs
+                    if (!d.objectStoreNames.contains('animal_costs')) {
+                        const ac = d.createObjectStore('animal_costs', { keyPath: 'id', autoIncrement: true });
+                        ac.createIndex('animal_id', 'animal_id');
+                    }
+                    // Activities
+                    if (!d.objectStoreNames.contains('activities')) {
+                        const act = d.createObjectStore('activities', { keyPath: 'id', autoIncrement: true });
+                        act.createIndex('animal_id', 'animal_id');
+                        act.createIndex('activity_type', 'activity_type');
+                        act.createIndex('activity_date', 'activity_date');
+                    }
+                    // Milk Production
+                    if (!d.objectStoreNames.contains('milk_production')) {
+                        const mp = d.createObjectStore('milk_production', { keyPath: 'id', autoIncrement: true });
+                        mp.createIndex('animal_id', 'animal_id');
+                        mp.createIndex('record_date', 'record_date');
+                    }
+                    // Feed Consumption
+                    if (!d.objectStoreNames.contains('feed_consumption')) {
+                        const fc = d.createObjectStore('feed_consumption', { keyPath: 'id', autoIncrement: true });
+                        fc.createIndex('shed_id', 'shed_id');
+                        fc.createIndex('record_date', 'record_date');
+                    }
+                    // Transactions
+                    if (!d.objectStoreNames.contains('transactions')) {
+                        const tx = d.createObjectStore('transactions', { keyPath: 'id', autoIncrement: true });
+                        tx.createIndex('animal_id', 'animal_id');
+                        tx.createIndex('type', 'type');
+                        tx.createIndex('trans_date', 'trans_date');
+                    }
+                    // Vaccines
+                    if (!d.objectStoreNames.contains('vaccines')) {
+                        const vx = d.createObjectStore('vaccines', { keyPath: 'id', autoIncrement: true });
+                        vx.createIndex('name', 'name');
+                    }
+                    // Vaccine Stock
+                    if (!d.objectStoreNames.contains('vaccine_stock')) {
+                        const vs = d.createObjectStore('vaccine_stock', { keyPath: 'id', autoIncrement: true });
+                        vs.createIndex('vaccine_id', 'vaccine_id');
+                        vs.createIndex('expiry_date', 'expiry_date');
+                    }
+                    // Vaccination Records
+                    if (!d.objectStoreNames.contains('vaccination_records')) {
+                        const vr = d.createObjectStore('vaccination_records', { keyPath: 'id', autoIncrement: true });
+                        vr.createIndex('animal_id', 'animal_id');
+                        vr.createIndex('vaccine_id', 'vaccine_id');
+                        vr.createIndex('status', 'status');
+                        vr.createIndex('due_date', 'due_date');
+                    }
+                    // Weight Records
+                    if (!d.objectStoreNames.contains('weight_records')) {
+                        const wr = d.createObjectStore('weight_records', { keyPath: 'id', autoIncrement: true });
+                        wr.createIndex('animal_id', 'animal_id');
+                        wr.createIndex('record_date', 'record_date');
+                    }
+                    // Employee Tasks
+                    if (!d.objectStoreNames.contains('employee_tasks')) {
+                        const et = d.createObjectStore('employee_tasks', { keyPath: 'id', autoIncrement: true });
+                        et.createIndex('assigned_to_id', 'assigned_to_id');
+                        et.createIndex('status', 'status');
+                        et.createIndex('due_date', 'due_date');
+                    }
+                    // Alerts
+                    if (!d.objectStoreNames.contains('alerts')) {
+                        const al = d.createObjectStore('alerts', { keyPath: 'id', autoIncrement: true });
+                        al.createIndex('animal_id', 'animal_id');
+                        al.createIndex('is_read', 'is_read');
+                        al.createIndex('created_at', 'created_at');
+                    }
+                };
+                req.onsuccess = (e) => {
+                    db = e.target.result;
+                    dbReady = true;
+                    resolve(db);
+                };
+                req.onerror = (e) => reject(e.target.error);
+            });
+        }
+
+        function dbAdd(store, data) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(store, 'readwrite');
+                const req = tx.objectStore(store).add(data);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function dbPut(store, data) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(store, 'readwrite');
+                const req = tx.objectStore(store).put(data);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function dbDelete(store, id) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(store, 'readwrite');
+                const req = tx.objectStore(store).delete(id);
+                req.onsuccess = () => resolve();
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function dbGetAll(store, index, value) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(store, 'readonly');
+                let req;
+                if (index && value !== undefined) {
+                    req = tx.objectStore(store).index(index).getAll(value);
+                } else {
+                    req = tx.objectStore(store).getAll();
+                }
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function dbGet(store, id) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(store, 'readonly');
+                const req = tx.objectStore(store).get(id);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function dbGetByIndex(store, index, value) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(store, 'readonly');
+                const req = tx.objectStore(store).index(index).get(value);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        function dbGetAllByIndex(store, index, value) {
+            return new Promise((resolve, reject) => {
+                const tx = db.transaction(store, 'readonly');
+                const req = tx.objectStore(store).index(index).getAll(value);
+                req.onsuccess = () => resolve(req.result);
+                req.onerror = () => reject(req.error);
+            });
+        }
+
+        // ---- HELPERS ----
+        function e(str) {
+            if (str === null || str === undefined) return '';
+            return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+        }
+
+        function getAge(dob) {
+            if (!dob) return 'N/A';
+            try {
+                const d = new Date(dob);
+                const now = new Date();
+                let years = now.getFullYear() - d.getFullYear();
+                let months = now.getMonth() - d.getMonth();
+                if (months < 0) { years--;
+                    months += 12; }
+                if (years > 0) return years + 'y ' + months + 'm';
+                return months + 'm';
+            } catch (e) { return 'N/A'; }
+        }
+
+        function generateAutoID(type) {
+            const prefix = { 'Goat': 'c', 'Buck': 'p', 'Castrated': 'k' } [type] || 'x';
+            return prefix + (Date.now() % 100000);
+        }
+
+        function formatDate(d) {
+            if (!d) return '-';
+            return new Date(d).toISOString().split('T')[0];
+        }
+
+        function today() {
+            return new Date().toISOString().split('T')[0];
+        }
+
+        function addDays(date, days) {
+            const d = new Date(date);
+            d.setDate(d.getDate() + days);
+            return d.toISOString().split('T')[0];
+        }
+
+        function calcTotalCost(animalId) {
+            return new Promise((resolve) => {
+                dbGetAllByIndex('animal_costs', 'animal_id', animalId).then(costs => {
+                    let total = 0;
+                    costs.forEach(c => total += c.amount || 0);
+                    resolve(total);
+                }).catch(() => resolve(0));
+            });
+        }
+
+        function showAlert(msg, type = 'success') {
+            const area = document.getElementById('alertArea');
+            if (!area) {
+                const d = document.createElement('div');
+                d.id = 'alertArea';
+                d.className = 'mb-3';
+                const container = document.querySelector('.content-area .page-section.active') || document
+                .querySelector('.content-area');
+                container.prepend(d);
+            }
+            const el = document.getElementById('alertArea');
+            el.innerHTML =
+                `<div class="alert alert-${type} alert-dismissible fade show" role="alert">${msg}<button type="button" class="btn-close" data-bs-dismiss="alert"></button></div>`;
+            setTimeout(() => { const a = document.querySelector('.alert'); if (a) a.remove(); }, 5000);
+        }
+
+        // ---- AUTH ----
+        function checkAuth() {
+            const user = JSON.parse(sessionStorage.getItem('goatUser') || 'null');
+            if (user) {
+                currentUser = user;
+                document.getElementById('userBadge').textContent = '(' + e(user.username) + ')';
+                document.getElementById('usersNavLink').style.display = user.role === 'admin' ? '' : 'none';
+                return true;
+            }
+            return false;
+        }
+
+        function login(username, password) {
+            return new Promise((resolve, reject) => {
+                dbGetAll('users').then(users => {
+                    const user = users.find(u => u.username === username);
+                    if (!user) { reject('Invalid credentials'); return; }
+                    // Simple password check (in production, use bcrypt)
+                    if (user.password !== password) { reject('Invalid credentials'); return; }
+                    currentUser = user;
+                    sessionStorage.setItem('goatUser', JSON.stringify(user));
+                    document.getElementById('userBadge').textContent = '(' + e(user.username) + ')';
+                    document.getElementById('usersNavLink').style.display = user.role === 'admin' ? '' : 'none';
+                    resolve(user);
+                }).catch(reject);
+            });
+        }
+
+        function logout() {
+            currentUser = null;
+            sessionStorage.removeItem('goatUser');
+            location.reload();
+        }
+
+        // ---- ROUTER ----
+        function navigateTo(page, params) {
+            if (page === 'login') {
+                showLogin();
+                return;
+            }
+            if (!checkAuth()) {
+                showLogin();
+                return;
+            }
+            currentPage = page;
+            document.querySelectorAll('.page-section').forEach(el => el.classList.remove('active'));
+            const target = document.getElementById('page-' + page);
+            if (target) {
+                target.classList.add('active');
+            } else {
+                // fallback
+                document.getElementById('page-dashboard').classList.add('active');
+            }
+            // Update nav
+            document.querySelectorAll('#sidebarNav .nav-link').forEach(el => el.classList.remove('active'));
+            const navLink = document.querySelector(`#sidebarNav .nav-link[data-page="${page}"]`);
+            if (navLink) navLink.classList.add('active');
+            const titles = {
+                dashboard: 'Dashboard',
+                animals: 'Animals',
+                activities: 'Activities',
+                finance: 'Finance',
+                vaccination: 'Vaccination',
+                reports: 'Reports',
+                inventory: 'Inventory',
+                tasks: 'Tasks Board',
+                scanner: 'QR Scanner',
+                users: 'Users',
+                animal_profile: 'Animal Profile',
+                animal_form: 'Animal Form'
+            };
+            document.getElementById('pageTitle').innerHTML = `<i class="bi me-2"></i>${titles[page] || page}`;
+            // Render
+            renderPage(page, params);
+            // Close mobile sidebar
+            document.getElementById('sidebar').classList.remove('show');
+            document.querySelector('.sidebar-overlay').classList.remove('active');
+            // Scroll to top
+            document.querySelector('.content-area').scrollTop = 0;
+        }
+
+        function renderPage(page, params) {
+            switch (page) {
+                case 'dashboard':
+                    renderDashboard();
+                    break;
+                case 'animals':
+                    renderAnimals(params);
+                    break;
+                case 'activities':
+                    renderActivities(params);
+                    break;
+                case 'finance':
+                    renderFinance(params);
+                    break;
+                case 'vaccination':
+                    renderVaccination(params);
+                    break;
+                case 'reports':
+                    renderReports(params);
+                    break;
+                case 'inventory':
+                    renderInventory(params);
+                    break;
+                case 'tasks':
+                    renderTasks(params);
+                    break;
+                case 'scanner':
+                    renderScanner(params);
+                    break;
+                case 'users':
+                    renderUsers(params);
+                    break;
+                case 'animal_profile':
+                    renderAnimalProfile(params);
+                    break;
+                case 'animal_form':
+                    renderAnimalForm(params);
+                    break;
+                default:
+                    renderDashboard();
+            }
+        }
+
+        // ---- LOGIN PAGE ----
+        function showLogin() {
+            document.querySelector('.main-content').innerHTML = `
+                <div class="d-flex align-items-center justify-content-center" style="min-height:100vh;">
+                    <div class="card p-4 shadow-lg" style="max-width:400px;width:100%;">
+                        <div class="text-center mb-3">
+                            <i class="bi bi-goat fs-1 text-primary"></i>
+                            <h4 class="mt-2 text-uppercase fw-bold">Farm Manager Pro</h4>
+                            <p class="small text-muted">Secure Sign-On Portal</p>
+                        </div>
+                        <form onsubmit="handleLogin(event)">
+                            <div class="mb-3">
+                                <input name="username" class="form-control" placeholder="Username" required autocomplete="off">
+                            </div>
+                            <div class="mb-3">
+                                <input type="password" name="password" class="form-control" placeholder="Password" required>
+                            </div>
+                            <div id="loginAlert"></div>
+                            <button class="btn btn-primary w-100">Sign In</button>
+                        </form>
+                        <div class="mt-3 border-top pt-2 text-center">
+                            <small class="text-muted">Default: admin / password</small>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function handleLogin(e) {
+            e.preventDefault();
+            const form = e.target;
+            const username = form.querySelector('[name="username"]').value;
+            const password = form.querySelector('[name="password"]').value;
+            login(username, password).then(() => {
+                location.reload();
+            }).catch(err => {
+                document.getElementById('loginAlert').innerHTML =
+                    `<div class="alert alert-danger py-2 small">${e(err)}</div>`;
+            });
+        }
+
+        // ---- DASHBOARD ----
+        async function renderDashboard() {
+            const container = document.getElementById('dashboardContent');
+            const animals = await dbGetAll('animals');
+            const active = animals.filter(a => a.status === 'Active');
+            const total = active.length;
+            const kids = active.filter(a => {
+                if (!a.dob) return false;
+                const age = getAgeMonths(a.dob);
+                return age <= 3;
+            }).length;
+            const breedingReady = active.filter(a => {
+                if (!a.dob) return false;
+                const age = getAgeMonths(a.dob);
+                return a.health_status === 'Healthy' && a.pregnancy_status === 'Not Pregnant' && age >= 8;
+            }).length;
+            const readyForSale = active.filter(a => a.sale_readiness === 'Ready').length;
+            const sick = active.filter(a => a.health_status === 'Sick' || a.health_status === 'Critical').length;
+
+            // Expiring vaccines
+            const stocks = await dbGetAll('vaccine_stock');
+            const expiring = stocks.filter(s => {
+                if (!s.expiry_date) return false;
+                const d = new Date(s.expiry_date);
+                const now = new Date();
+                const diff = (d - now) / (1000 * 60 * 60 * 24);
+                return diff <= 30 && diff >= 0 && (s.stock_quantity || 0) > 0;
+            });
+            const vaccines = await dbGetAll('vaccines');
+            const vmap = {};
+            vaccines.forEach(v => vmap[v.id] = v.name);
+
+            // Withdrawal
+            const activities = await dbGetAll('activities');
+            const now = new Date();
+            const withdrawal = activities.filter(a => {
+                if (!a.withdrawal_end_date) return false;
+                const d = new Date(a.withdrawal_end_date);
+                return d >= now && a.animal_id;
+            });
+            const wAnimals = [];
+            for (const w of withdrawal) {
+                const an = await dbGet('animals', w.animal_id);
+                if (an) wAnimals.push({ ...w, animal: an });
+            }
+
+            // Upcoming heat
+            const heatAnimals = active.filter(a => {
+                if (!a.next_heat_date) return false;
+                const d = new Date(a.next_heat_date);
+                const now2 = new Date();
+                const diff = (d - now2) / (1000 * 60 * 60 * 24);
+                return diff >= 0 && diff <= 7;
+            });
+
+            // Breeding suggestions
+            const females = active.filter(a => a.type === 'Goat' && a.health_status === 'Healthy' && a
+                .pregnancy_status === 'Not Pregnant' && getAgeMonths(a.dob) >= 8);
+            const bucks = active.filter(a => a.type === 'Buck' && a.health_status === 'Healthy');
+            const suggestions = [];
+            for (const f of females) {
+                const available = bucks.filter(b => b.id !== f.father_id && b.id !== f.mother_id);
+                if (available.length) {
+                    suggestions.push({ female: f, bucks: available });
+                }
+            }
+
+            // Upcoming vaccinations
+            const vacRecs = await dbGetAll('vaccination_records');
+            const pending = vacRecs.filter(v => v.status === 'Pending' || v.status === 'Overdue');
+            const upcoming = [];
+            for (const v of pending) {
+                const an = await dbGet('animals', v.animal_id);
+                if (an && an.status === 'Active') {
+                    const vac = await dbGet('vaccines', v.vaccine_id);
+                    if (vac) upcoming.push({ ...v, animal: an, vaccine: vac });
+                }
+            }
+            const sortedUpcoming = upcoming.sort((a, b) => new Date(a.due_date) - new Date(b.due_date)).slice(0, 10);
+
+            container.innerHTML = `
+                <div class="row g-3 mb-4 text-center">
+                    <div class="col-6 col-md-3 col-lg-2"><div class="card bg-primary text-white shadow-sm p-3 border-0 h-100 dashboard-card"><h6>Active Stocks</h6><h3>${total}</h3></div></div>
+                    <div class="col-6 col-md-3 col-lg-2"><div class="card bg-success text-white shadow-sm p-3 border-0 h-100 dashboard-card"><h6>Ready for Sale</h6><h3>${readyForSale}</h3></div></div>
+                    <div class="col-6 col-md-3 col-lg-2"><div class="card bg-info text-dark shadow-sm p-3 border-0 h-100 dashboard-card"><h6>Total Kids</h6><h3>${kids}</h3></div></div>
+                    <div class="col-6 col-md-3 col-lg-2"><div class="card bg-warning text-dark shadow-sm p-3 border-0 h-100 dashboard-card"><h6>Breeding Ready</h6><h3>${breedingReady}</h3></div></div>
+                    <div class="col-6 col-md-3 col-lg-2 offset-md-0 offset-lg-1"><div class="card bg-danger text-white shadow-sm p-3 border-0 h-100 dashboard-card"><h6>Sick Animals</h6><h3>${sick}</h3></div></div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm h-100 border-left-danger">
+                            <div class="card-header bg-danger text-white"><i class="bi bi-exclamation-triangle me-2"></i>Near Expiry Vaccines (30 Days)</div>
+                            <div class="card-body" style="max-height:200px;overflow-y:auto;">
+                                ${expiring.length === 0 ? '<p class="text-muted text-center py-3">No vaccines expiring soon.</p>' :
+                                    '<ul class="list-group list-group-flush">' + expiring.map(s => {
+                                        const name = vmap[s.vaccine_id] || 'Unknown';
+                                        return `<li class="list-group-item d-flex justify-content-between"><span><strong>${e(name)}</strong> (Batch: ${e(s.batch_number||'N/A')})</span><span class="badge bg-warning">Expires: ${e(s.expiry_date)}</span></li>`;
+                                    }).join('') + '</ul>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm h-100 border-left-warning">
+                            <div class="card-header bg-warning text-dark"><i class="bi bi-clock-history me-2"></i>Animals in Withdrawal</div>
+                            <div class="card-body" style="max-height:200px;overflow-y:auto;">
+                                ${wAnimals.length === 0 ? '<p class="text-muted text-center py-3">No animals in withdrawal period.</p>' :
+                                    '<ul class="list-group list-group-flush">' + wAnimals.map(w =>
+                                        `<li class="list-group-item d-flex justify-content-between"><span><strong>${e(w.animal?.auto_id||'')}</strong> (${e(w.animal?.name||'')})</span><span class="badge bg-danger">Until ${e(w.withdrawal_end_date)}</span></li>`
+                                    ).join('') + '</ul>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-4 mb-4">
+                        <div class="card shadow-sm h-100 border-left-success">
+                            <div class="card-header bg-success text-white"><i class="bi bi-heart-pulse me-2"></i>Upcoming Heat Cycles (Next 7 Days)</div>
+                            <div class="card-body" style="max-height:200px;overflow-y:auto;">
+                                ${heatAnimals.length === 0 ? '<p class="text-muted text-center py-3">No upcoming heat cycles predicted.</p>' :
+                                    '<ul class="list-group list-group-flush">' + heatAnimals.map(a =>
+                                        `<li class="list-group-item d-flex justify-content-between"><span><strong>${e(a.auto_id)}</strong> (${e(a.name||'')})</span><span class="badge bg-success">${e(a.next_heat_date)}</span></li>`
+                                    ).join('') + '</ul>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-dark text-white"><i class="bi bi-shield-plus me-2"></i>Upcoming Group Vaccinations (Next 15 Days)</div>
+                            <div class="card-body">
+                                ${sortedUpcoming.length === 0 ? '<p class="text-muted text-center py-4">No upcoming group vaccination targets found.</p>' :
+                                    '<div class="table-responsive"><table class="table table-sm table-striped"><thead><tr><th>Tag ID</th><th>Animal Name</th><th>Vaccine</th><th>Due</th></tr></thead><tbody>' +
+                                    sortedUpcoming.map(v =>
+                                        `<tr><td><strong>${e(v.animal?.auto_id||'')}</strong></td><td>${e(v.animal?.name||'')}</td><td>${e(v.vaccine?.name||'')}</td><td>${e(v.due_date)}</td></tr>`
+                                    ).join('') + '</tbody></table></div>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card shadow-sm h-100">
+                            <div class="card-header bg-success text-white"><i class="bi bi-heart-pulse me-2"></i>Lineage Breeding Match Finder</div>
+                            <div class="card-body">
+                                ${suggestions.length === 0 ? '<p class="text-muted text-center py-4">No matching active cross-breeding pairs detected.</p>' :
+                                    '<ul class="list-group list-group-flush" style="max-height:280px;overflow-y:auto;">' +
+                                    suggestions.map(s =>
+                                        `<li class="list-group-item d-flex justify-content-between align-items-center"><div><strong class="text-primary">${e(s.female.auto_id)} (${e(s.female.name||'')})</strong> Recommended Mates:</div><div>${s.bucks.map(b => `<span class="badge bg-secondary">${e(b.auto_id)}</span>`).join(' ')}</div></li>`
+                                    ).join('') + '</ul>'
+                                }
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getAgeMonths(dob) {
+            if (!dob) return 0;
+            try {
+                const d = new Date(dob);
+                const now = new Date();
+                return (now.getFullYear() - d.getFullYear()) * 12 + (now.getMonth() - d.getMonth());
+            } catch (e) { return 0; }
+        }
+
+        // ---- ANIMALS ----
+        async function renderAnimals(params) {
+            const container = document.getElementById('animalsContent');
+            const f = filterState;
+            let animals = await dbGetAll('animals');
+            // Apply filters
+            if (f.type) animals = animals.filter(a => a.type === f.type);
+            if (f.health_status) animals = animals.filter(a => a.health_status === f.health_status);
+            if (f.status) animals = animals.filter(a => a.status === f.status);
+            if (f.breed) animals = animals.filter(a => (a.breed || '').toLowerCase().includes(f.breed.toLowerCase()));
+            if (f.vaccination_status) animals = animals.filter(a => a.vaccination_status === f.vaccination_status);
+            if (f.pregnancy_status) animals = animals.filter(a => a.pregnancy_status === f.pregnancy_status);
+            if (f.weight_min) animals = animals.filter(a => (a.weight || 0) >= parseFloat(f.weight_min));
+            if (f.weight_max) animals = animals.filter(a => (a.weight || 0) <= parseFloat(f.weight_max));
+            if (f.age_min) animals = animals.filter(a => getAgeMonths(a.dob) >= parseInt(f.age_min));
+            if (f.age_max) animals = animals.filter(a => getAgeMonths(a.dob) <= parseInt(f.age_max));
+            if (f.sale_readiness) animals = animals.filter(a => a.sale_readiness === f.sale_readiness);
+            if (f.date_from) animals = animals.filter(a => a.dob && a.dob >= f.date_from);
+            if (f.date_to) animals = animals.filter(a => a.dob && a.dob <= f.date_to);
+            if (f.shed_id) animals = animals.filter(a => a.shed_id === parseInt(f.shed_id));
+
+            const total = animals.length;
+            const limit = 10;
+            const page = parseInt(params?.p) || 1;
+            const totalPages = Math.ceil(total / limit) || 1;
+            const start = (page - 1) * limit;
+            const paged = animals.slice(start, start + limit);
+
+            const sheds = await dbGetAll('sheds');
+            const shedMap = {};
+            sheds.forEach(s => shedMap[s.id] = s.name);
+
+            container.innerHTML = `
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <h4 class="mb-0">Animals Registry (${total} Records)</h4>
+                    <button class="btn btn-success" onclick="showAnimalForm()"><i class="bi bi-plus-circle"></i> Add Animal</button>
+                </div>
+
+                <div class="card p-3 mb-3 shadow-sm border">
+                    <div class="row g-2 align-items-center">
+                        <div class="col-12 col-md-3">
+                            <div class="input-group input-group-sm">
+                                <span class="input-group-text bg-light text-muted"><i class="bi bi-search"></i></span>
+                                <input type="text" id="animalSearch" class="form-control" placeholder="Search..." value="${e(f.search||'')}">
+                            </div>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <select id="filterType" class="form-select form-select-sm" onchange="applyAnimalFilters()">
+                                <option value="">All Types</option>
+                                <option value="Goat" ${f.type==='Goat'?'selected':''}>Goat</option>
+                                <option value="Buck" ${f.type==='Buck'?'selected':''}>Buck</option>
+                                <option value="Castrated" ${f.type==='Castrated'?'selected':''}>Castrated</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <select id="filterHealth" class="form-select form-select-sm" onchange="applyAnimalFilters()">
+                                <option value="">All Health</option>
+                                <option value="Healthy" ${f.health_status==='Healthy'?'selected':''}>Healthy</option>
+                                <option value="Sick" ${f.health_status==='Sick'?'selected':''}>Sick</option>
+                                <option value="Critical" ${f.health_status==='Critical'?'selected':''}>Critical</option>
+                            </select>
+                        </div>
+                        <div class="col-6 col-md-2">
+                            <select id="filterStatus" class="form-select form-select-sm" onchange="applyAnimalFilters()">
+                                <option value="">All Status</option>
+                                <option value="Active" ${f.status==='Active'?'selected':''}>Active</option>
+                                <option value="Sold" ${f.status==='Sold'?'selected':''}>Sold</option>
+                                <option value="Dead" ${f.status==='Dead'?'selected':''}>Dead</option>
+                            </select>
+                        </div>
+                        <div class="col-12 col-md-3 d-flex gap-1">
+                            <button class="btn btn-sm btn-primary flex-grow-1" onclick="applyAnimalFilters()"><i class="bi bi-filter"></i> Apply</button>
+                            <button class="btn btn-sm btn-secondary flex-grow-1" onclick="clearAnimalFilters()"><i class="bi bi-x-circle"></i> Reset</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive bg-white rounded shadow-sm p-2 p-md-3 border mb-3">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr><th>ID</th><th>Name</th><th>Type</th><th>Breed</th><th class="d-none d-sm-table-cell">Age</th><th class="d-none d-sm-table-cell">Weight</th><th>Health</th><th class="d-none d-md-table-cell">Min Sell</th><th>Action</th></tr>
+                        </thead>
+                        <tbody>
+                            ${paged.length === 0 ? '<tr><td colspan="9" class="text-center text-muted py-3">No records found.</td></tr>' :
+                                paged.map(a => {
+                                    const cost = a._cost || 0;
+                                    const minSell = cost * 1.10;
+                                    return `<tr>
+                                        <td><strong>${e(a.auto_id)}</strong></td>
+                                        <td>${e(a.name||'')}</td>
+                                        <td><span class="badge badge-light">${e(a.type)}</span></td>
+                                        <td>${e(a.breed||'')}</td>
+                                        <td class="d-none d-sm-table-cell">${getAge(a.dob)}</td>
+                                        <td class="d-none d-sm-table-cell">${e(a.weight||0)} kg</td>
+                                        <td><span class="badge bg-${a.health_status==='Healthy'?'success':a.health_status==='Sick'?'warning':'danger'}">${e(a.health_status)}</span></td>
+                                        <td class="d-none d-md-table-cell">$${minSell.toFixed(2)}</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-info py-1 px-2" onclick="viewAnimal(${a.id})"><i class="bi bi-eye"></i></button>
+                                            <button class="btn btn-sm btn-warning py-1 px-2" onclick="editAnimal(${a.id})"><i class="bi bi-pencil"></i></button>
+                                        </td>
+                                    </tr>`;
+                                }).join('')
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                ${totalPages > 1 ? `
+                <nav><ul class="pagination pagination-sm justify-content-center flex-wrap">
+                    <li class="page-item ${page<=1?'disabled':''}"><a class="page-link" href="#" onclick="navigateTo('animals',{p:1})"><i class="bi bi-chevron-double-left"></i></a></li>
+                    <li class="page-item ${page<=1?'disabled':''}"><a class="page-link" href="#" onclick="navigateTo('animals',{p:${page-1}})"><i class="bi bi-chevron-left"></i></a></li>
+                    ${Array.from({length:Math.min(5,totalPages)},(_,i)=>{
+                        const pg = Math.max(1,Math.min(totalPages,page-2+i));
+                        return `<li class="page-item ${pg===page?'active':''}"><a class="page-link" href="#" onclick="navigateTo('animals',{p:${pg}})">${pg}</a></li>`;
+                    }).join('')}
+                    <li class="page-item ${page>=totalPages?'disabled':''}"><a class="page-link" href="#" onclick="navigateTo('animals',{p:${page+1}})"><i class="bi bi-chevron-right"></i></a></li>
+                    <li class="page-item ${page>=totalPages?'disabled':''}"><a class="page-link" href="#" onclick="navigateTo('animals',{p:${totalPages}})"><i class="bi bi-chevron-double-right"></i></a></li>
+                </ul></nav>
+                ` : ''}
+            `;
+
+            // Load costs in background
+            for (const a of paged) {
+                const cost = await calcTotalCost(a.id);
+                a._cost = cost;
+            }
+            // Re-render to show costs
+            // Simple: just update the min sell values
+            const rows = container.querySelectorAll('tbody tr');
+            let idx = 0;
+            for (const a of paged) {
+                if (rows[idx]) {
+                    const costCell = rows[idx].querySelector('td:nth-child(8)');
+                    if (costCell) {
+                        const cost = await calcTotalCost(a.id);
+                        a._cost = cost;
+                        costCell.textContent = '$' + (cost * 1.10).toFixed(2);
+                    }
+                }
+                idx++;
+            }
+        }
+
+        function applyAnimalFilters() {
+            const search = document.getElementById('animalSearch')?.value || '';
+            const type = document.getElementById('filterType')?.value || '';
+            const health = document.getElementById('filterHealth')?.value || '';
+            const status = document.getElementById('filterStatus')?.value || '';
+            filterState.search = search;
+            filterState.type = type;
+            filterState.health_status = health;
+            filterState.status = status;
+            navigateTo('animals');
+        }
+
+        function clearAnimalFilters() {
+            filterState = {};
+            document.getElementById('animalSearch').value = '';
+            document.getElementById('filterType').value = '';
+            document.getElementById('filterHealth').value = '';
+            document.getElementById('filterStatus').value = '';
+            navigateTo('animals');
+        }
+
+        function applyFilters(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            filterState = {};
+            for (const [key, val] of data) {
+                if (val) filterState[key] = val;
+            }
+            navigateTo(currentPage);
+            const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('filterCanvas'));
+            if (offcanvas) offcanvas.hide();
+        }
+
+        function clearFilters() {
+            filterState = {};
+            document.getElementById('filterForm').reset();
+            navigateTo(currentPage);
+            const offcanvas = bootstrap.Offcanvas.getInstance(document.getElementById('filterCanvas'));
+            if (offcanvas) offcanvas.hide();
+        }
+
+        // ---- ANIMAL PROFILE ----
+        async function viewAnimal(id) {
+            currentAnimalId = id;
+            navigateTo('animal_profile', { id: id });
+        }
+
+        async function renderAnimalProfile(params) {
+            const id = parseInt(params?.id) || currentAnimalId;
+            if (!id) { navigateTo('animals'); return; }
+            const container = document.getElementById('animalProfileContent');
+            const animal = await dbGet('animals', id);
+            if (!animal) { container.innerHTML =
+                `<div class="alert alert-danger">Animal not found.</div>`; return; }
+
+            const sheds = await dbGetAll('sheds');
+            const shedMap = {};
+            sheds.forEach(s => shedMap[s.id] = s.name);
+            const mother = animal.mother_id ? await dbGet('animals', animal.mother_id) : null;
+            const father = animal.father_id ? await dbGet('animals', animal.father_id) : null;
+
+            const costs = await dbGetAllByIndex('animal_costs', 'animal_id', id);
+            const totalCost = costs.reduce((s, c) => s + (c.amount || 0), 0);
+            const minSell = totalCost * 1.10;
+            const profit = animal.selling_price ? animal.selling_price - totalCost : null;
+
+            const activities = await dbGetAllByIndex('activities', 'animal_id', id);
+            const sortedActs = activities.sort((a, b) => new Date(b.activity_date) - new Date(a.activity_date)).slice(0, 10);
+
+            const weightRecs = await dbGetAllByIndex('weight_records', 'animal_id', id);
+            const sortedWeights = weightRecs.sort((a, b) => new Date(a.record_date) - new Date(b.record_date));
+
+            const vacRecs = await dbGetAllByIndex('vaccination_records', 'animal_id', id);
+            const vacData = [];
+            for (const v of vacRecs) {
+                const vac = await dbGet('vaccines', v.vaccine_id);
+                if (vac) vacData.push({ ...v, vaccine: vac });
+            }
+
+            const qrUrl = window.location.href.split('?')[0] + '?page=animal_profile&id=' + id;
+
+            container.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-12 col-md-4 text-center mb-3">
+                        <div class="card p-3 shadow-sm">
+                            <img src="assets/images/${e(animal.image||'default.png')}" class="img-fluid rounded mb-3 shadow" style="max-height:220px;object-fit:cover;" onerror="this.src='data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 width=%22200%22 height=%22200%22%3E%3Crect fill=%22%23ddd%22 width=%22200%22 height=%22200%22/%3E%3Ctext x=%2250%%22 y=%2250%%22 text-anchor=%22middle%22 dy=%22.3em%22 fill=%22%23999%22 font-size=%2220%22%3ENo Image%3C/text%3E%3C/svg%3E'">
+                            <h3>${e(animal.name||'Unnamed')}</h3>
+                            <h5 class="text-muted">${e(animal.auto_id)}</h5>
+                            <hr>
+                            <img src="https://api.qrserver.com/v1/create-qr-code/?size=150x150&data=${encodeURIComponent(qrUrl)}" class="img-thumbnail" alt="QR">
+                            <p class="small text-muted mt-2">Scan QR for profile</p>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-8">
+                        <div class="card p-3 p-md-4 shadow-sm mb-3">
+                            <h5 class="mb-3 text-primary border-bottom pb-2"><i class="bi bi-info-circle-fill"></i> Core Metrics</h5>
+                            <div class="row g-2">
+                                <div class="col-6 col-lg-3"><strong>Type:</strong> ${e(animal.type)}</div>
+                                <div class="col-6 col-lg-3"><strong>Breed:</strong> ${e(animal.breed||'N/A')}</div>
+                                <div class="col-6 col-lg-3"><strong>DOB:</strong> ${e(animal.dob||'N/A')}</div>
+                                <div class="col-6 col-lg-3"><strong>Weight:</strong> ${e(animal.weight||0)} kg</div>
+                                <div class="col-6 col-lg-3"><strong>Color:</strong> ${e(animal.color||'N/A')}</div>
+                                <div class="col-6 col-lg-3"><strong>Vaccination:</strong> ${e(animal.vaccination_status||'Pending')}</div>
+                                <div class="col-6 col-lg-3"><strong>Pregnancy:</strong> ${e(animal.pregnancy_status||'Not Pregnant')}</div>
+                                <div class="col-6 col-lg-3"><strong>Status:</strong> ${e(animal.status)}</div>
+                                <div class="col-6 col-lg-3"><strong>Last Heat:</strong> ${e(animal.last_heat_date||'N/A')}</div>
+                                <div class="col-6 col-lg-3"><strong>Next Heat:</strong> ${e(animal.next_heat_date||'N/A')}</div>
+                                <div class="col-6 col-lg-3"><strong>Kidding:</strong> ${e(animal.kidding_date||'N/A')}</div>
+                                <div class="col-6 col-lg-3"><strong>Shed:</strong> ${e(shedMap[animal.shed_id]||'Unallocated')}</div>
+                            </div>
+                        </div>
+
+                        <div class="card p-3 p-md-4 shadow-sm mb-3">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center border-bottom pb-2 mb-3">
+                                <h5 class="mb-0"><i class="bi bi-graph-up-arrow text-primary me-2"></i>Weight Trend</h5>
+                                <button class="btn btn-sm btn-outline-primary" onclick="showWeightModal(${id})"><i class="bi bi-plus-circle"></i> Log Weight</button>
+                            </div>
+                            ${sortedWeights.length === 0 ? '<p class="text-muted text-center py-2">No weight records yet.</p>' :
+                                `<div style="height:200px;"><canvas id="weightChart"></canvas></div>`
+                            }
+                        </div>
+
+                        <div class="card p-3 p-md-4 shadow-sm mb-3">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 border-bottom pb-2">
+                                <h5 class="mb-0 text-success"><i class="bi bi-wallet2"></i> Cost & Profit</h5>
+                                <button class="btn btn-sm btn-success" onclick="showProfileCostModal(${id})"><i class="bi bi-plus-circle me-1"></i> Log Expense</button>
+                            </div>
+                            <div class="row text-center g-2">
+                                <div class="col-4"><div class="border rounded p-2 bg-light"><h6>Cost</h6><strong>$${totalCost.toFixed(2)}</strong></div></div>
+                                <div class="col-4"><div class="border rounded p-2 bg-light"><h6>Min Sell</h6><strong>$${minSell.toFixed(2)}</strong></div></div>
+                                ${profit !== null ? `<div class="col-4"><div class="border rounded p-2 bg-light"><h6>Profit</h6><strong class="${profit>=0?'text-success':'text-danger'}">$${profit.toFixed(2)}</strong></div></div>` : ''}
+                            </div>
+                        </div>
+
+                        <div class="row g-3">
+                            <div class="col-12 col-md-6">
+                                <div class="card p-3 p-md-4 shadow-sm h-100">
+                                    <h5 class="mb-3 text-info border-bottom pb-2"><i class="bi bi-activity"></i> Activities</h5>
+                                    <ul class="list-group list-group-flush">
+                                        ${sortedActs.length === 0 ? '<li class="list-group-item text-muted text-center">No activities.</li>' :
+                                            sortedActs.map(a => `<li class="list-group-item"><small><strong>${e(a.activity_date)}</strong> - ${e(a.activity_type)}: ${e(a.description||'')}</small></li>`).join('')
+                                        }
+                                    </ul>
+                                </div>
+                            </div>
+                            <div class="col-12 col-md-6">
+                                <div class="card p-3 p-md-4 shadow-sm h-100">
+                                    <h5 class="mb-3 text-danger border-bottom pb-2"><i class="bi bi-shield-check"></i> Vaccines</h5>
+                                    <div class="table-responsive">
+                                        <table class="table table-sm">
+                                            <thead><tr><th>Vaccine</th><th>Status</th></tr></thead>
+                                            <tbody>
+                                                ${vacData.length === 0 ? '<tr><td colspan="2" class="text-center text-muted">No records.</td></tr>' :
+                                                    vacData.map(v => `<tr><td>${e(v.vaccine?.name||'')}</td><td><span class="badge bg-${v.status==='Completed'?'success':v.status==='Overdue'?'danger':'warning'}">${e(v.status)}</span></td></tr>`).join('')
+                                                }
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="mt-3">
+                            <button class="btn btn-secondary" onclick="navigateTo('animals')"><i class="bi bi-arrow-left"></i> Back</button>
+                            <button class="btn btn-warning" onclick="editAnimal(${id})"><i class="bi bi-pencil"></i> Edit</button>
+                            <button class="btn btn-danger" onclick="deleteAnimal(${id})"><i class="bi bi-trash"></i> Delete</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Render weight chart
+            if (sortedWeights.length > 0) {
+                const labels = sortedWeights.map(w => w.record_date);
+                const data = sortedWeights.map(w => w.weight);
+                setTimeout(() => {
+                    const ctx = document.getElementById('weightChart');
+                    if (ctx) {
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: labels,
+                                datasets: [{ label: 'Weight (kg)', data: data, borderColor: '#0078d4',
+                                    backgroundColor: 'rgba(0,120,212,0.1)', fill: true, tension: 0.1 }]
+                            },
+                            options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } },
+                                scales: { y: { beginAtZero: true } } }
+                        });
+                    }
+                }, 100);
+            }
+        }
+
+        // ---- ANIMAL FORM ----
+        function showAnimalForm(id) {
+            currentAnimalId = id || null;
+            navigateTo('animal_form', { id: id });
+        }
+
+        function editAnimal(id) {
+            showAnimalForm(id);
+        }
+
+        async function renderAnimalForm(params) {
+            const id = parseInt(params?.id) || null;
+            const container = document.getElementById('animalFormContent');
+            const animal = id ? await dbGet('animals', id) : null;
+            const sheds = await dbGetAll('sheds');
+            const allAnimals = await dbGetAll('animals');
+            const activeAnimals = allAnimals.filter(a => a.status === 'Active');
+
+            container.innerHTML = `
+                <div class="card p-3 p-md-4 shadow-sm border">
+                    <h4>${id ? 'Edit ' + e(animal?.name||'') : 'Add Stock Record'}</h4>
+                    <form onsubmit="saveAnimal(event, ${id||'null'})">
+                        <div class="row g-2">
+                            <div class="col-12 col-md-4 mb-2"><label class="form-label">Name</label><input name="name" class="form-control" value="${e(animal?.name||'')}" required></div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Type</label>
+                                <select name="type" class="form-select">
+                                    <option value="Goat" ${animal?.type==='Goat'?'selected':''}>Goat</option>
+                                    <option value="Buck" ${animal?.type==='Buck'?'selected':''}>Buck</option>
+                                    <option value="Castrated" ${animal?.type==='Castrated'?'selected':''}>Castrated</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Color</label><input name="color" class="form-control" value="${e(animal?.color||'')}"></div>
+                            <div class="col-12 col-md-4 mb-2"><label class="form-label">Breed</label><input name="breed" class="form-control" value="${e(animal?.breed||'')}"></div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">DOB</label><input type="date" name="dob" class="form-control" value="${e(animal?.dob||'')}" required></div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Weight (kg)</label><input type="number" step="0.01" name="weight" class="form-control" value="${e(animal?.weight||'')}"></div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Temp (°C)</label><input type="number" step="0.01" name="temp_celsius" class="form-control" value="${e(animal?.temp_celsius||'')}"></div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Pulse</label><input type="number" name="pulse_rate" class="form-control" value="${e(animal?.pulse_rate||'')}"></div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Respiration</label><input type="number" name="resp_rate" class="form-control" value="${e(animal?.resp_rate||'')}"></div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Last Heat</label><input type="date" name="last_heat_date" class="form-control" value="${e(animal?.last_heat_date||'')}"></div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Next Heat</label><input type="date" name="next_heat_date" class="form-control" value="${e(animal?.next_heat_date||'')}"></div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Kidding</label><input type="date" name="kidding_date" class="form-control" value="${e(animal?.kidding_date||'')}"></div>
+                            <div class="col-6 col-md-3 mb-2"><label class="form-label">Health</label>
+                                <select name="health_status" class="form-select">
+                                    <option value="Healthy" ${animal?.health_status==='Healthy'?'selected':''}>Healthy</option>
+                                    <option value="Sick" ${animal?.health_status==='Sick'?'selected':''}>Sick</option>
+                                    <option value="Critical" ${animal?.health_status==='Critical'?'selected':''}>Critical</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2"><label class="form-label">Pregnancy</label>
+                                <select name="pregnancy_status" class="form-select">
+                                    <option value="Not Pregnant" ${animal?.pregnancy_status==='Not Pregnant'?'selected':''}>Not Pregnant</option>
+                                    <option value="Pregnant" ${animal?.pregnancy_status==='Pregnant'?'selected':''}>Pregnant</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2"><label class="form-label">Sale Ready</label>
+                                <select name="sale_readiness" class="form-select">
+                                    <option value="Not Ready" ${animal?.sale_readiness==='Not Ready'?'selected':''}>Not Ready</option>
+                                    <option value="Ready" ${animal?.sale_readiness==='Ready'?'selected':''}>Ready</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-3 mb-2"><label class="form-label">Status</label>
+                                <select name="status" class="form-select">
+                                    <option value="Active" ${animal?.status==='Active'?'selected':''}>Active</option>
+                                    <option value="Sold" ${animal?.status==='Sold'?'selected':''}>Sold</option>
+                                    <option value="Dead" ${animal?.status==='Dead'?'selected':''}>Dead</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Shed</label>
+                                <select name="shed_id" class="form-select">
+                                    <option value="">Unassigned</option>
+                                    ${sheds.map(s => `<option value="${s.id}" ${(animal?.shed_id||'')==s.id?'selected':''}>${e(s.name)}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Mother</label>
+                                <select name="mother_id" class="form-select">
+                                    <option value="">Unknown</option>
+                                    ${activeAnimals.filter(a=>a.type==='Goat').map(a => `<option value="${a.id}" ${(animal?.mother_id||'')==a.id?'selected':''}>${e(a.auto_id)} ${e(a.name||'')}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Father</label>
+                                <select name="father_id" class="form-select">
+                                    <option value="">Unknown</option>
+                                    ${activeAnimals.filter(a=>a.type==='Buck').map(a => `<option value="${a.id}" ${(animal?.father_id||'')==a.id?'selected':''}>${e(a.auto_id)} ${e(a.name||'')}</option>`).join('')}
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Purchase Type</label>
+                                <select name="purchase_type" class="form-select">
+                                    <option value="Born" ${animal?.purchase_type==='Born'?'selected':''}>Born</option>
+                                    <option value="Purchased" ${animal?.purchase_type==='Purchased'?'selected':''}>Purchased</option>
+                                </select>
+                            </div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Purchase Price</label><input type="number" step="0.01" name="purchase_price" class="form-control" value="${e(animal?.purchase_price||'')}"></div>
+                            <div class="col-6 col-md-4 mb-2"><label class="form-label">Selling Price</label><input type="number" step="0.01" name="selling_price" class="form-control" value="${e(animal?.selling_price||'')}"></div>
+                            <div class="col-12 mb-2"><label class="form-label">Notes</label><textarea name="notes" class="form-control" rows="2">${e(animal?.notes||'')}</textarea></div>
+                        </div>
+                        <button class="btn btn-primary w-100"><i class="bi bi-save"></i> Save</button>
+                        <button type="button" class="btn btn-secondary w-100 mt-2" onclick="navigateTo('animals')">Cancel</button>
+                    </form>
+                </div>
+            `;
+        }
+
+        async function saveAnimal(e, id) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const obj = {};
+            for (const [key, val] of data) {
+                if (val !== '') obj[key] = val;
+            }
+            // Parse numbers
+            const numFields = ['weight', 'temp_celsius', 'pulse_rate', 'resp_rate', 'purchase_price', 'selling_price',
+                'shed_id', 'mother_id', 'father_id'
+            ];
+            for (const f of numFields) {
+                if (obj[f] !== undefined && obj[f] !== '') obj[f] = parseFloat(obj[f]);
+                else if (obj[f] === '') obj[f] = null;
+            }
+            // Dates
+            const dateFields = ['dob', 'last_heat_date', 'next_heat_date', 'kidding_date'];
+            for (const f of dateFields) {
+                if (obj[f] === '') obj[f] = null;
+            }
+
+            if (id) {
+                // Edit
+                const existing = await dbGet('animals', id);
+                if (!existing) { showAlert('Animal not found', 'danger'); return; }
+                const updated = { ...existing, ...obj };
+                await dbPut('animals', updated);
+                showAlert('Profile saved.');
+            } else {
+                // Add
+                const type = obj.type || 'Goat';
+                const auto_id = generateAutoID(type);
+                const animal = {
+                    auto_id,
+                    name: obj.name || '',
+                    type: type,
+                    breed: obj.breed || '',
+                    color: obj.color || '',
+                    dob: obj.dob || null,
+                    weight: obj.weight || 0,
+                    health_status: obj.health_status || 'Healthy',
+                    vaccination_status: 'Pending',
+                    pregnancy_status: obj.pregnancy_status || 'Not Pregnant',
+                    sale_readiness: obj.sale_readiness || 'Not Ready',
+                    status: obj.status || 'Active',
+                    shed_id: obj.shed_id || null,
+                    mother_id: obj.mother_id || null,
+                    father_id: obj.father_id || null,
+                    purchase_type: obj.purchase_type || 'Born',
+                    purchase_price: obj.purchase_price || 0,
+                    selling_price: obj.selling_price || null,
+                    image: 'default.png',
+                    notes: obj.notes || '',
+                    temp_celsius: obj.temp_celsius || null,
+                    pulse_rate: obj.pulse_rate || null,
+                    resp_rate: obj.resp_rate || null,
+                    kidding_date: obj.kidding_date || null,
+                    last_heat_date: obj.last_heat_date || null,
+                    next_heat_date: obj.next_heat_date || null,
+                    created_at: new Date().toISOString()
+                };
+                const newId = await dbAdd('animals', animal);
+                if (obj.purchase_type === 'Purchased' && obj.purchase_price > 0) {
+                    await dbAdd('animal_costs', { animal_id: newId, category: 'Other', amount: parseFloat(obj
+                            .purchase_price), cost_date: today(), note: 'Purchase Expense' });
+                    await dbAdd('transactions', { animal_id: newId, type: 'Expense', category: 'Purchase',
+                        amount: parseFloat(obj.purchase_price), trans_date: today(),
+                        description: 'Purchase of stock ID ' + auto_id });
+                }
+                showAlert('Animal ' + auto_id + ' logged.');
+            }
+            navigateTo('animals');
+        }
+
+        async function deleteAnimal(id) {
+            if (!confirm('Delete this animal permanently?')) return;
+            await dbDelete('animals', id);
+            // Also delete related records
+            const costs = await dbGetAllByIndex('animal_costs', 'animal_id', id);
+            for (const c of costs) await dbDelete('animal_costs', c.id);
+            const acts = await dbGetAllByIndex('activities', 'animal_id', id);
+            for (const a of acts) await dbDelete('activities', a.id);
+            const wrs = await dbGetAllByIndex('weight_records', 'animal_id', id);
+            for (const w of wrs) await dbDelete('weight_records', w.id);
+            showAlert('Animal deleted.');
+            navigateTo('animals');
+        }
+
+        // ---- ACTIVITIES ----
+        async function renderActivities(params) {
+            const container = document.getElementById('activitiesContent');
+            const animals = await dbGetAll('animals');
+            const activeAnimals = animals.filter(a => a.status === 'Active');
+
+            // Apply filters
+            let activities = await dbGetAll('activities');
+            if (filterState.activity_type) activities = activities.filter(a => a.activity_type === filterState
+            .activity_type);
+            if (filterState.date_from) activities = activities.filter(a => a.activity_date >= filterState.date_from);
+            if (filterState.date_to) activities = activities.filter(a => a.activity_date <= filterState.date_to);
+
+            const sorted = activities.sort((a, b) => new Date(b.activity_date) - new Date(a.activity_date)).slice(0, 100);
+            const animalMap = {};
+            animals.forEach(a => animalMap[a.id] = a);
+
+            container.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-12 col-md-7">
+                        <div class="card p-3 p-md-4 shadow-sm border">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                                <h5><i class="bi bi-gear-wide-connected me-2"></i>Log Activity</h5>
+                                <button class="btn btn-warning btn-sm" onclick="showBulkModal()"><i class="bi bi-layers-half"></i> Bulk</button>
+                            </div>
+
+                            <div id="breedingGuideline" class="alert alert-info py-2 small d-none">
+                                <strong>DLS Mating:</strong> Mate 12-14 hours post heat onset.
+                            </div>
+                            <div id="kiddingFields" class="d-none">
+                                <div class="alert alert-secondary p-2 mb-2">
+                                    <label class="form-label small fw-bold">Number of Kids</label>
+                                    <input type="number" id="kid_count" class="form-control form-control-sm" min="1" max="4" onchange="generateKidFields()">
+                                    <div id="kid_inputs" class="mt-2"></div>
+                                </div>
+                            </div>
+                            <div id="withdrawalFields" class="d-none mb-2">
+                                <label class="form-label small">Withdrawal Days</label>
+                                <input type="number" id="withdrawal_days" class="form-control form-control-sm" value="0" min="0">
+                                <small class="text-muted">e.g., 7 for antibiotic withdrawal</small>
+                            </div>
+
+                            <form onsubmit="logActivity(event)">
+                                <input type="hidden" name="add" value="1">
+                                <div class="row g-2">
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small">Activity Type</label>
+                                        <select name="activity_type" id="activity_type_select" class="form-select" onchange="toggleActivityFields()">
+                                            <option value="Feeding">Feeding</option>
+                                            <option value="Vaccination">Vaccination</option>
+                                            <option value="Treatment">Treatment</option>
+                                            <option value="Breeding">Breeding</option>
+                                            <option value="Pregnancy Check">Pregnancy Check</option>
+                                            <option value="Deworming">Deworming</option>
+                                            <option value="Expense">Expense</option>
+                                            <option value="Sale">Sale</option>
+                                            <option value="Death">Death</option>
+                                            <option value="Kidding">Kidding (Birth)</option>
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small">Animal</label>
+                                        <select name="animal_id" class="form-select">
+                                            <option value="">Bulk / Unspecified</option>
+                                            ${activeAnimals.map(a => `<option value="${a.id}">${e(a.auto_id)} ${e(a.name||'')}</option>`).join('')}
+                                        </select>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small">Date</label>
+                                        <input type="date" name="activity_date" class="form-control" value="${today()}" required>
+                                    </div>
+                                    <div class="col-12 col-md-6">
+                                        <label class="form-label small">Financial Outlay</label>
+                                        <input type="number" step="0.01" name="amount" class="form-control" value="0.00">
+                                    </div>
+                                    <div class="col-12">
+                                        <label class="form-label small">Description</label>
+                                        <input name="description" class="form-control" placeholder="Notes" required>
+                                    </div>
+                                    <div class="col-12">
+                                        <button class="btn btn-primary w-100">Save Activity</button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-5">
+                        <div class="card p-3 p-md-4 shadow-sm border h-100">
+                            <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-droplet-half text-primary me-2"></i>Daily Milk Yield</h5>
+                            <form onsubmit="logMilk(event)">
+                                <div class="mb-2">
+                                    <label class="form-label small">Doe</label>
+                                    <select name="animal_id" class="form-select" required>
+                                        ${activeAnimals.filter(a=>a.type==='Goat').map(a => `<option value="${a.id}">${e(a.auto_id)} ${e(a.name||'')}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small">Liters</label>
+                                    <input type="number" step="0.01" name="quantity_liters" class="form-control" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small">Date</label>
+                                    <input type="date" name="record_date" class="form-control" value="${today()}" required>
+                                </div>
+                                <button class="btn btn-success w-100"><i class="bi bi-cloud-arrow-up"></i> Log Yield</button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="table-responsive bg-white rounded shadow-sm p-2 p-md-3 border mt-4">
+                    <table class="table table-hover align-middle mb-0">
+                        <thead class="table-dark">
+                            <tr><th>Date</th><th>Type</th><th>Animal</th><th>Description</th><th>Amount</th><th>Withdrawal</th></tr>
+                        </thead>
+                        <tbody>
+                            ${sorted.length === 0 ? '<tr><td colspan="6" class="text-center text-muted">No entries.</td></tr>' :
+                                sorted.map(a => {
+                                    const an = animalMap[a.animal_id];
+                                    return `<tr>
+                                        <td>${e(a.activity_date)}</td>
+                                        <td><span class="badge bg-secondary">${e(a.activity_type)}</span></td>
+                                        <td>${an ? e(an.auto_id) : 'Global'}</td>
+                                        <td>${e(a.description||'')}</td>
+                                        <td>${a.amount > 0 ? '$' + a.amount.toFixed(2) : '-'}</td>
+                                        <td>${a.withdrawal_end_date ? e(a.withdrawal_end_date) : '-'}</td>
+                                    </tr>`;
+                                }).join('')
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        function toggleActivityFields() {
+            const select = document.getElementById('activity_type_select');
+            const val = select.value;
+            document.getElementById('breedingGuideline').classList.toggle('d-none', val !== 'Breeding');
+            document.getElementById('kiddingFields').classList.toggle('d-none', val !== 'Kidding');
+            document.getElementById('withdrawalFields').classList.toggle('d-none', val !== 'Treatment' && val !==
+            'Vaccination');
+        }
+
+        function generateKidFields() {
+            const count = parseInt(document.getElementById('kid_count').value) || 0;
+            const container = document.getElementById('kid_inputs');
+            container.innerHTML = '';
+            for (let i = 1; i <= count; i++) {
+                container.innerHTML += `
+                    <div class="row g-2 mb-1">
+                        <div class="col-6">
+                            <label class="small">Kid ${i} Sex</label>
+                            <select name="kid_sex_${i}" class="form-select form-select-sm">
+                                <option value="Male">Male</option>
+                                <option value="Female" selected>Female</option>
+                            </select>
+                        </div>
+                        <div class="col-6">
+                            <label class="small">Weight (kg)</label>
+                            <input type="number" step="0.01" name="kid_weight_${i}" class="form-control form-control-sm" required>
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        async function logActivity(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const animal_id = data.get('animal_id') ? parseInt(data.get('animal_id')) : null;
+            const type = data.get('activity_type') || 'Feeding';
+            const date = data.get('activity_date') || today();
+            const desc = data.get('description') || '';
+            const amount = parseFloat(data.get('amount')) || 0;
+            const withdrawal_days = parseInt(document.getElementById('withdrawal_days')?.value) || 0;
+            const withdrawal_end_date = withdrawal_days > 0 ? addDays(date, withdrawal_days) : null;
+
+            let allow_mating = true;
+            let finalDesc = desc;
+
+            // Kidding
+            if (type === 'Kidding' && animal_id) {
+                const kidCount = parseInt(document.getElementById('kid_count')?.value) || 0;
+                const kidsData = [];
+                for (let i = 1; i <= kidCount; i++) {
+                    const sex = document.querySelector(`[name="kid_sex_${i}"]`)?.value || 'Female';
+                    const weight = parseFloat(document.querySelector(`[name="kid_weight_${i}"]`)?.value) || 0;
+                    if (weight > 0) kidsData.push({ sex, weight });
+                }
+                if (kidsData.length > 0) {
+                    await registerKidding(animal_id, kidsData, date);
+                    showAlert('Kidding logged. ' + kidsData.length + ' kids registered.');
+                } else {
+                    showAlert('Kidding logged, no valid kids data.', 'warning');
+                }
+                finalDesc = 'Kidding occurred. ' + desc;
+            }
+
+            // Breeding
+            if (type === 'Breeding' && animal_id) {
+                const an = await dbGet('animals', animal_id);
+                if (an && an.type === 'Goat') {
+                    const ageMonths = getAgeMonths(an.dob);
+                    if (ageMonths < 7) { showAlert('Under-age.', 'danger');
+                        allow_mating = false; }
+                    if ((an.weight || 0) < 12.00) { showAlert('Under-weight.', 'danger');
+                        allow_mating = false; }
+                    if (allow_mating) {
+                        const next_heat = addDays(date, 21);
+                        an.last_heat_date = date;
+                        an.next_heat_date = next_heat;
+                        an.pregnancy_status = 'Pregnant';
+                        await dbPut('animals', an);
+                        const est_start = addDays(date, 142);
+                        const est_end = addDays(date, 158);
+                        finalDesc += ' [Pregnancy window: ' + est_start + ' to ' + est_end + ']';
+                    }
+                }
+            }
+
+            if (allow_mating) {
+                const activity = {
+                    animal_id: animal_id,
+                    activity_type: type,
+                    activity_date: date,
+                    description: finalDesc,
+                    amount: amount,
+                    user_id: currentUser?.id || null,
+                    withdrawal_end_date: withdrawal_end_date,
+                    created_at: new Date().toISOString()
+                };
+                const actId = await dbAdd('activities', activity);
+
+                if (animal_id) {
+                    const an = await dbGet('animals', animal_id);
+                    if (an) {
+                        if (type === 'Vaccination') {
+                            an.vaccination_status = 'Complete';
+                            await dbPut('animals', an);
+                        } else if (type === 'Sale') {
+                            // Check withdrawal
+                            const activitiesAll = await dbGetAllByIndex('activities', 'animal_id', animal_id);
+                            const inWithdrawal = activitiesAll.some(a2 => a2.withdrawal_end_date && a2
+                                .withdrawal_end_date >= today());
+                            if (inWithdrawal) {
+                                showAlert('Sale blocked: In withdrawal period.', 'danger');
+                                return;
+                            }
+                            an.status = 'Sold';
+                            an.selling_price = amount;
+                            await dbPut('animals', an);
+                            await dbAdd('transactions', { animal_id, type: 'Income', category: 'Sale',
+                                amount, trans_date: date, description: desc });
+                        } else if (type === 'Death') {
+                            an.status = 'Dead';
+                            await dbPut('animals', an);
+                        } else if (type === 'Expense') {
+                            await dbAdd('animal_costs', { animal_id, category: 'Other', amount, cost_date: date,
+                                note: desc });
+                            await dbAdd('transactions', { animal_id, type: 'Expense', category: 'General Expense',
+                                amount, trans_date: date, description: desc });
+                        }
+                    }
+                }
+                showAlert('Activity logged.');
+                // Reset form
+                form.reset();
+                document.getElementById('activity_date').value = today();
+                document.getElementById('kid_inputs').innerHTML = '';
+            }
+            renderActivities();
+        }
+
+        async function registerKidding(mother_id, kidsData, kiddingDate) {
+            const mother = await dbGet('animals', mother_id);
+            if (!mother) return;
+            const father_id = mother.father_id || null;
+            const shed_id = mother.shed_id || null;
+
+            for (const kid of kidsData) {
+                const sex = kid.sex;
+                const weight = kid.weight;
+                const type = sex === 'Male' ? 'Buck' : 'Goat';
+                const auto_id = generateAutoID(type);
+                const animal = {
+                    auto_id,
+                    name: sex + '-' + auto_id,
+                    type: type,
+                    dob: kiddingDate,
+                    weight: weight,
+                    health_status: 'Healthy',
+                    status: 'Active',
+                    shed_id: shed_id,
+                    mother_id: mother_id,
+                    father_id: father_id,
+                    purchase_type: 'Born',
+                    notes: 'Born from ' + mother.auto_id,
+                    vaccination_status: 'Pending',
+                    pregnancy_status: 'Not Pregnant',
+                    sale_readiness: 'Not Ready',
+                    image: 'default.png',
+                    created_at: new Date().toISOString()
+                };
+                await dbAdd('animals', animal);
+            }
+            mother.kidding_date = kiddingDate;
+            mother.pregnancy_status = 'Not Pregnant';
+            mother.next_heat_date = addDays(kiddingDate, 21);
+            await dbPut('animals', mother);
+        }
+
+        async function logMilk(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const animal_id = parseInt(data.get('animal_id'));
+            const liters = parseFloat(data.get('quantity_liters'));
+            const record_date = data.get('record_date') || today();
+            if (liters > 0) {
+                await dbAdd('milk_production', { animal_id, quantity_liters: liters, record_date, notes: '' });
+                showAlert('Milk yield logged.');
+                form.reset();
+                document.querySelector('[name="record_date"]').value = today();
+            }
+            renderActivities();
+        }
+
+        function showBulkModal() {
+            const container = document.getElementById('bulkModalBody');
+            dbGetAll('animals').then(animals => {
+                const active = animals.filter(a => a.status === 'Active');
+                container.innerHTML = `
+                    <form onsubmit="bulkOperation(event)">
+                        <div class="mb-3">
+                            <label class="form-label small">Bulk Type</label>
+                            <select name="bulk_type" class="form-select">
+                                <option value="Feeding">Feeding</option>
+                                <option value="Vaccination">Vaccination</option>
+                            </select>
+                        </div>
+                        <label class="form-label small">Select Animals</label>
+                        <div class="border rounded p-3 mb-3 bg-light" style="max-height:180px;overflow-y:auto;">
+                            ${active.map(a => `
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" name="animal_ids" value="${a.id}" id="bulk_chk_${a.id}">
+                                    <label class="form-check-label" for="bulk_chk_${a.id}">${e(a.auto_id)} - ${e(a.name||'')}</label>
+                                </div>
+                            `).join('')}
+                        </div>
+                        <button class="btn btn-warning w-100">Execute</button>
+                    </form>
+                `;
+                const modal = new bootstrap.Modal(document.getElementById('bulkModal'));
+                modal.show();
+            });
+        }
+
+        async function bulkOperation(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const ids = data.getAll('animal_ids');
+            const bulkType = data.get('bulk_type') || 'Feeding';
+            if (ids.length === 0) { showAlert('Select at least one animal.', 'warning'); return; }
+            for (const id of ids) {
+                await dbAdd('activities', {
+                    animal_id: parseInt(id),
+                    activity_type: bulkType,
+                    activity_date: today(),
+                    description: 'Bulk ' + bulkType,
+                    amount: 0,
+                    user_id: currentUser?.id || null,
+                    withdrawal_end_date: null,
+                    created_at: new Date().toISOString()
+                });
+            }
+            showAlert('Bulk operations completed.');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('bulkModal'));
+            if (modal) modal.hide();
+            renderActivities();
+        }
+
+        // ---- FINANCE ----
+        async function renderFinance(params) {
+            const container = document.getElementById('financeContent');
+            let transactions = await dbGetAll('transactions');
+            // Filters
+            if (filterState.date_from) transactions = transactions.filter(t => t.trans_date >= filterState.date_from);
+            if (filterState.date_to) transactions = transactions.filter(t => t.trans_date <= filterState.date_to);
+            if (filterState.type) transactions = transactions.filter(t => t.type === filterState.type);
+
+            const sorted = transactions.sort((a, b) => new Date(b.trans_date) - new Date(a.trans_date)).slice(0, 100);
+            const income = transactions.filter(t => t.type === 'Income').reduce((s, t) => s + (t.amount || 0), 0);
+            const expense = transactions.filter(t => t.type === 'Expense').reduce((s, t) => s + (t.amount || 0), 0);
+            const capital = income - expense;
+
+            const animals = await dbGetAll('animals');
+            const animalMap = {};
+            animals.forEach(a => animalMap[a.id] = a);
+
+            // Monthly data
+            const monthlyMap = {};
+            for (const t of transactions) {
+                const key = t.trans_date ? t.trans_date.substring(0, 7) : 'unknown';
+                if (!monthlyMap[key]) monthlyMap[key] = { inc: 0, exp: 0 };
+                if (t.type === 'Income') monthlyMap[key].inc += t.amount || 0;
+                else monthlyMap[key].exp += t.amount || 0;
+            }
+            const months = Object.keys(monthlyMap).sort();
+            const incData = months.map(m => monthlyMap[m].inc);
+            const expData = months.map(m => monthlyMap[m].exp);
+
+            container.innerHTML = `
+                <div class="row g-3 mb-4 text-center">
+                    <div class="col-md-4"><div class="card bg-success text-white shadow-sm"><div class="card-body"><h6>Active Ledger Income</h6><h3>$${income.toFixed(2)}</h3></div></div></div>
+                    <div class="col-md-4"><div class="card bg-danger text-white shadow-sm"><div class="card-body"><h6>Active Ledger Expenses</h6><h3>$${expense.toFixed(2)}</h3></div></div></div>
+                    <div class="col-md-4"><div class="card bg-info text-dark shadow-sm"><div class="card-body"><h6>Realized Net Capital</h6><h3>$${capital.toFixed(2)}</h3></div></div></div>
+                </div>
+
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5>Bookkeeping Ledger Record Matrix</h5>
+                    <button class="btn btn-success btn-sm" onclick="showTransModal()"><i class="bi bi-wallet2"></i> Add Transaction</button>
+                </div>
+
+                <div class="table-responsive bg-white rounded shadow-sm p-3 mb-4">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr><th>Date</th><th>Type</th><th>Category</th><th>Amount</th><th>Animal Connection</th></tr>
+                        </thead>
+                        <tbody>
+                            ${sorted.length === 0 ? '<tr><td colspan="5" class="text-center text-muted">No entries match active filters.</td></tr>' :
+                                sorted.map(t => {
+                                    const an = animalMap[t.animal_id];
+                                    return `<tr>
+                                        <td>${e(t.trans_date)}</td>
+                                        <td><span class="badge bg-${t.type==='Income'?'success':'danger'}">${e(t.type)}</span></td>
+                                        <td>${e(t.category)}</td>
+                                        <td>$${(t.amount||0).toFixed(2)}</td>
+                                        <td>${an ? e(an.auto_id + ' (' + (an.name||'') + ')') : '-'}</td>
+                                    </tr>`;
+                                }).join('')
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="card p-3 shadow-sm">
+                    <div class="card-header bg-dark text-white mb-2">Monthly Cashflow Performance Charts</div>
+                    <div style="width:100%;max-height:250px;">
+                        <canvas id="monthlyChart"></canvas>
+                    </div>
+                </div>
+            `;
+
+            // Render chart
+            if (months.length > 0) {
+                setTimeout(() => {
+                    const ctx = document.getElementById('monthlyChart');
+                    if (ctx) {
+                        new Chart(ctx, {
+                            type: 'line',
+                            data: {
+                                labels: months,
+                                datasets: [
+                                    { label: 'Income flow', data: incData, borderColor: '#2ec4b6',
+                                        fill: false },
+                                    { label: 'Expenses flow', data: expData, borderColor: '#e71d36',
+                                        fill: false }
+                                ]
+                            },
+                            options: { responsive: true, maintainAspectRatio: false }
+                        });
+                    }
+                }, 100);
+            }
+        }
+
+        function showTransModal() {
+            const container = document.getElementById('transModalBody');
+            dbGetAll('animals').then(animals => {
+                const active = animals.filter(a => a.status === 'Active');
+                container.innerHTML = `
+                    <form onsubmit="addTransaction(event)">
+                        <div class="mb-2">
+                            <label class="form-label small">Transaction Directional Flow</label>
+                            <select name="type" class="form-select">
+                                <option value="Income">Income</option>
+                                <option value="Expense">Expense</option>
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small">Ledger Classification Category</label>
+                            <select name="category" class="form-select">
+                                <option value="Feed">Feed</option>
+                                <option value="Medicine">Medicine</option>
+                                <option value="Vaccine">Vaccine</option>
+                                <option value="Labor">Labor</option>
+                                <option value="Sale">Sale</option>
+                                <option value="Purchase">Purchase</option>
+                                <option value="Other">Other</option>
+                            </select>
+                        </div>
+                        <div class="mb-2"><label class="form-label small">Amount</label><input type="number" step="0.01" name="amount" class="form-control" required></div>
+                        <div class="mb-2"><label class="form-label small">Transaction Timestamp</label><input type="date" name="trans_date" class="form-control" value="${today()}" required></div>
+                        <div class="mb-2">
+                            <label class="form-label small">Target Animal Association (Optional)</label>
+                            <select name="animal_id" class="form-select">
+                                <option value="">Global Transaction</option>
+                                ${active.map(a => `<option value="${a.id}">${e(a.auto_id)} ${e(a.name||'')}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="mb-2"><label class="form-label small">Brief Context Statement</label><input name="description" class="form-control"></div>
+                        <button class="btn btn-primary w-100">Commit Transaction</button>
+                    </form>
+                `;
+                const modal = new bootstrap.Modal(document.getElementById('transModal'));
+                modal.show();
+            });
+        }
+
+        async function addTransaction(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const animal_id = data.get('animal_id') ? parseInt(data.get('animal_id')) : null;
+            const type = data.get('type') || 'Expense';
+            const category = data.get('category') || 'Other';
+            const amount = parseFloat(data.get('amount')) || 0;
+            const trans_date = data.get('trans_date') || today();
+            const description = data.get('description') || '';
+
+            await dbAdd('transactions', { animal_id, type, category, amount, trans_date, description,
+                created_at: new Date().toISOString() });
+            if (type === 'Expense' && animal_id) {
+                await dbAdd('animal_costs', { animal_id, category, amount, cost_date: trans_date, note: description });
+            }
+            showAlert('Transaction logged securely.');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('transModal'));
+            if (modal) modal.hide();
+            renderFinance();
+        }
+
+        // ---- VACCINATION ----
+        async function renderVaccination(params) {
+            const container = document.getElementById('vaccinationContent');
+            const records = await dbGetAll('vaccination_records');
+            const animals = await dbGetAll('animals');
+            const vaccines = await dbGetAll('vaccines');
+            const animalMap = {};
+            animals.forEach(a => animalMap[a.id] = a);
+            const vaccineMap = {};
+            vaccines.forEach(v => vaccineMap[v.id] = v);
+
+            // Apply filters
+            let filtered = records;
+            if (filterState.status) filtered = filtered.filter(r => r.status === filterState.status);
+            if (filterState.animal_id) filtered = filtered.filter(r => r.animal_id === parseInt(filterState.animal_id));
+
+            const sorted = filtered.sort((a, b) => new Date(b.due_date) - new Date(a.due_date));
+
+            container.innerHTML = `
+                <div class="row g-3">
+                    <div class="col-12 col-md-8">
+                        <div class="card p-3 p-md-4 shadow-sm border h-100">
+                            <div class="d-flex flex-wrap justify-content-between align-items-center mb-3">
+                                <h5><i class="bi bi-shield-check me-2"></i>Immunization Log</h5>
+                                <button class="btn btn-primary btn-sm" onclick="showSchedModal()"><i class="bi bi-calendar-plus"></i> Schedule</button>
+                            </div>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle mb-0">
+                                    <thead class="table-dark">
+                                        <tr><th>Animal</th><th>Vaccine</th><th>Due</th><th>Given</th><th>Status</th><th>Action</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        ${sorted.length === 0 ? '<tr><td colspan="6" class="text-center text-muted py-3">No records.</td></tr>' :
+                                            sorted.map(r => {
+                                                const an = animalMap[r.animal_id];
+                                                const vac = vaccineMap[r.vaccine_id];
+                                                return `<tr class="${r.status==='Overdue'?'table-warning':''}">
+                                                    <td><strong>${an ? e(an.auto_id) : 'N/A'}</strong></td>
+                                                    <td>${vac ? e(vac.name) : 'N/A'}</td>
+                                                    <td>${e(r.due_date)}</td>
+                                                    <td>${e(r.given_date||'-')}</td>
+                                                    <td><span class="badge bg-${r.status==='Completed'?'success':r.status==='Overdue'?'danger':'warning'}">${e(r.status)}</span></td>
+                                                    <td>${r.status !== 'Completed' ? `<button class="btn btn-sm btn-success py-1 px-2" onclick="completeVaccination(${r.id})"><i class="bi bi-patch-check"></i></button>` : ''}</td>
+                                                </tr>`;
+                                            }).join('')
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12 col-md-4">
+                        <div class="card p-3 p-md-4 shadow-sm border mb-3">
+                            <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-shield-plus me-2"></i>Add Custom Vaccine</h5>
+                            <form onsubmit="addVaccineRule(event)">
+                                <div class="mb-2">
+                                    <label class="form-label small">Vaccine Name</label>
+                                    <input name="vname" class="form-control form-control-sm" required>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small">Age (Months)</label>
+                                    <input type="number" name="vage" class="form-control form-control-sm" required min="0">
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small">Repeat (Months)</label>
+                                    <input type="number" name="vrepeat" class="form-control form-control-sm" required min="0">
+                                </div>
+                                <button class="btn btn-primary btn-sm w-100"><i class="bi bi-plus-circle"></i> Save</button>
+                            </form>
+                        </div>
+                        <div class="card p-3 p-md-4 shadow-sm border">
+                            <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-info-circle me-2"></i>Vaccine Rules</h5>
+                            <div class="table-responsive" style="max-height:200px;overflow-y:auto;">
+                                <table class="table table-sm table-striped mb-0">
+                                    <thead><tr><th>Vaccine</th><th>Age</th><th>Repeat</th></tr></thead>
+                                    <tbody>
+                                        ${vaccines.length === 0 ? '<tr><td colspan="3" class="text-center text-muted">No vaccines.</td></tr>' :
+                                            vaccines.map(v => `<tr><td>${e(v.name)}</td><td>${e(v.recommended_age_months)}m</td><td>${v.repeat_months > 0 ? e(v.repeat_months)+'m' : 'Once'}</td></tr>`).join('')
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function addVaccineRule(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const name = data.get('vname');
+            const age = parseInt(data.get('vage')) || 0;
+            const repeat = parseInt(data.get('vrepeat')) || 0;
+            if (name) {
+                await dbAdd('vaccines', { name, recommended_age_months: age, repeat_months: repeat });
+                showAlert('Vaccine rule created.');
+                form.reset();
+                await runAutomation();
+                renderVaccination();
+            }
+        }
+
+        function showSchedModal() {
+            const container = document.getElementById('schedModalBody');
+            Promise.all([dbGetAll('animals'), dbGetAll('vaccines')]).then(([animals, vaccines]) => {
+                const active = animals.filter(a => a.status === 'Active');
+                container.innerHTML = `
+                    <form onsubmit="scheduleVaccination(event)">
+                        <div class="mb-2">
+                            <label class="form-label small">Animal</label>
+                            <select name="animal_id" class="form-select" required>
+                                ${active.map(a => `<option value="${a.id}">${e(a.auto_id)} ${e(a.name||'')}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="mb-2">
+                            <label class="form-label small">Vaccine</label>
+                            <select name="vaccine_id" class="form-select" required>
+                                ${vaccines.map(v => `<option value="${v.id}">${e(v.name)}</option>`).join('')}
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label small">Due Date</label>
+                            <input type="date" name="due_date" class="form-control" value="${today()}" required>
+                        </div>
+                        <button class="btn btn-primary w-100">Schedule</button>
+                    </form>
+                `;
+                const modal = new bootstrap.Modal(document.getElementById('schedModal'));
+                modal.show();
+            });
+        }
+
+        async function scheduleVaccination(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const animal_id = parseInt(data.get('animal_id'));
+            const vaccine_id = parseInt(data.get('vaccine_id'));
+            const due_date = data.get('due_date') || today();
+            await dbAdd('vaccination_records', { animal_id, vaccine_id, due_date, status: 'Pending',
+                given_date: null });
+            showAlert('Schedule registered.');
+            const modal = bootstrap.Modal.getInstance(document.getElementById('schedModal'));
+            if (modal) modal.hide();
+            renderVaccination();
+        }
+
+        async function completeVaccination(recordId) {
+            const rec = await dbGet('vaccination_records', recordId);
+            if (!rec) return;
+            rec.status = 'Completed';
+            rec.given_date = today();
+            await dbPut('vaccination_records', rec);
+
+            // Update animal
+            const an = await dbGet('animals', rec.animal_id);
+            if (an) {
+                an.vaccination_status = 'Complete';
+                await dbPut('animals', an);
+            }
+            // Add cost
+            const vac = await dbGet('vaccines', rec.vaccine_id);
+            const vName = vac ? vac.name : 'Vaccine';
+            await dbAdd('animal_costs', { animal_id: rec.animal_id, category: 'Vaccine', amount: 10, cost_date: today(),
+                note: 'Administered ' + vName });
+            await dbAdd('transactions', { animal_id: rec.animal_id, type: 'Expense', category: 'Vaccine', amount: 10,
+                trans_date: today(), description: 'Administered ' + vName });
+
+            showAlert('Record completed.');
+            await runAutomation();
+            renderVaccination();
+        }
+
+        // ---- REPORTS ----
+        async function renderReports(params) {
+            const container = document.getElementById('reportsContent');
+            const animals = await dbGetAll('animals');
+            const data = [];
+            for (const a of animals) {
+                const cost = await calcTotalCost(a.id);
+                const profit = a.selling_price ? a.selling_price - cost : null;
+                data.push({ ...a, cost, profit });
+            }
+            // Filter
+            let filtered = data;
+            if (filterState.type) filtered = filtered.filter(d => d.type === filterState.type);
+            if (filterState.status) filtered = filtered.filter(d => d.status === filterState.status);
+            if (filterState.profit_loss === 'profit') filtered = filtered.filter(d => d.profit !== null && d.profit >= 0);
+            if (filterState.profit_loss === 'loss') filtered = filtered.filter(d => d.profit !== null && d.profit < 0);
+
+            const sorted = filtered.sort((a, b) => (b.profit || 0) - (a.profit || 0));
+
+            container.innerHTML = `
+                <div class="d-flex flex-wrap justify-content-between align-items-center mb-3 gap-2">
+                    <h4 class="mb-0">Profit Reports</h4>
+                    <div class="d-flex flex-wrap gap-2">
+                        <button class="btn btn-success btn-sm" onclick="exportCSV()"><i class="bi bi-file-earmark-excel"></i> Export CSV</button>
+                        <button class="btn btn-secondary btn-sm" onclick="window.print()"><i class="bi bi-printer"></i> Print</button>
+                    </div>
+                </div>
+
+                <div class="table-responsive bg-white rounded shadow-sm p-2 p-md-3">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr><th>ID</th><th>Name</th><th>Type</th><th class="d-none d-sm-table-cell">Shed</th><th>Cost</th><th class="d-none d-sm-table-cell">Value</th><th>Profit</th><th class="d-none d-md-table-cell">Min Sell</th></tr>
+                        </thead>
+                        <tbody>
+                            ${sorted.length === 0 ? '<tr><td colspan="8" class="text-center text-muted">No records.</td></tr>' :
+                                sorted.map(r => {
+                                    const minSell = r.cost * 1.10;
+                                    const profitVal = r.profit;
+                                    return `<tr>
+                                        <td><strong>${e(r.auto_id)}</strong></td>
+                                        <td>${e(r.name||'')}</td>
+                                        <td>${e(r.type)}</td>
+                                        <td class="d-none d-sm-table-cell">${e(r.shed_name||'N/A')}</td>
+                                        <td>$${r.cost.toFixed(2)}</td>
+                                        <td class="d-none d-sm-table-cell">${r.selling_price ? '$' + r.selling_price.toFixed(2) : '-'}</td>
+                                        <td class="${profitVal !== null ? (profitVal >= 0 ? 'text-success' : 'text-danger') : 'text-muted'}">
+                                            ${profitVal !== null ? '$' + profitVal.toFixed(2) : 'N/A'}
+                                        </td>
+                                        <td class="d-none d-md-table-cell">$${minSell.toFixed(2)}</td>
+                                    </tr>`;
+                                }).join('')
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        async function exportCSV() {
+            const animals = await dbGetAll('animals');
+            let rows = [];
+            for (const a of animals) {
+                const cost = await calcTotalCost(a.id);
+                const profit = a.selling_price ? a.selling_price - cost : null;
+                rows.push({
+                    auto_id: a.auto_id,
+                    name: a.name || '',
+                    type: a.type,
+                    shed: a.shed_name || 'N/A',
+                    cost: cost.toFixed(2),
+                    value: a.selling_price ? a.selling_price.toFixed(2) : '0.00',
+                    profit: profit !== null ? profit.toFixed(2) : 'N/A',
+                    min_sell: (cost * 1.10).toFixed(2)
+                });
+            }
+            const headers = ['Auto ID', 'Name', 'Type', 'Shed', 'Total Cost', 'Market Value', 'Profit', 'Min Sell'];
+            let csv = headers.join(',') + '\n';
+            for (const r of rows) {
+                csv += Object.values(r).map(v => '"' + v + '"').join(',') + '\n';
+            }
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'Farm_Report_' + new Date().toISOString().split('T')[0] + '.csv';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        // ---- INVENTORY ----
+        async function renderInventory(params) {
+            const container = document.getElementById('inventoryContent');
+            const sheds = await dbGetAll('sheds');
+            const vaccines = await dbGetAll('vaccines');
+            const stocks = await dbGetAll('vaccine_stock');
+            const feedRecs = await dbGetAll('feed_consumption');
+            const sortedFeed = feedRecs.sort((a, b) => new Date(b.record_date) - new Date(a.record_date)).slice(0, 50);
+
+            const vaccineMap = {};
+            vaccines.forEach(v => vaccineMap[v.id] = v.name);
+            const shedMap = {};
+            sheds.forEach(s => shedMap[s.id] = s.name);
+
+            // Feed shed selection
+            const feedShedId = parseInt(params?.feed_shed_id) || null;
+            let totalWeight = 0;
+            if (feedShedId) {
+                const animals = await dbGetAllByIndex('animals', 'shed_id', feedShedId);
+                totalWeight = animals.filter(a => a.status === 'Active').reduce((s, a) => s + (a.weight || 0), 0);
+            }
+            const requiredGrass = totalWeight * 0.10;
+            const requiredConcentrate = totalWeight * 0.015;
+
+            container.innerHTML = `
+                <div class="row">
+                    <div class="col-md-12 mb-4">
+                        <div class="card p-4 shadow-sm border">
+                            <h5><i class="bi bi-calculator me-2"></i>DLS Smart Diet Planner</h5>
+                            <form class="row g-2 align-items-center mb-3" onsubmit="return false;">
+                                <div class="col-md-8">
+                                    <select name="feed_shed_id" class="form-select form-select-sm" onchange="navigateTo('inventory',{feed_shed_id:this.value})">
+                                        <option value="">Select Shed to calculate target feed parameters...</option>
+                                        ${sheds.map(s => `<option value="${s.id}" ${feedShedId==s.id?'selected':''}>${e(s.name)}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="col-md-4">
+                                    <button class="btn btn-sm btn-primary w-100" onclick="navigateTo('inventory',{feed_shed_id:document.querySelector('[name=feed_shed_id]').value})">Calculate Feed Mix</button>
+                                </div>
+                            </form>
+                            ${feedShedId && totalWeight > 0 ? `
+                            <div class="row">
+                                <div class="col-md-6 border-end">
+                                    <h6 class="text-primary">Daily Shed Ration Outputs</h6>
+                                    <ul class="list-group list-group-flush small">
+                                        <li class="list-group-item d-flex justify-content-between"><span>Shed Total Weight:</span> <strong>${totalWeight.toFixed(2)} kg</strong></li>
+                                        <li class="list-group-item d-flex justify-content-between"><span>Required Green Grass (10%):</span> <strong>${requiredGrass.toFixed(2)} kg</strong></li>
+                                        <li class="list-group-item d-flex justify-content-between"><span>Required Concentrate Mix (1.5%):</span> <strong>${requiredConcentrate.toFixed(2)} kg</strong></li>
+                                        <li class="list-group-item d-flex justify-content-between"><span>Max Daily UMS Intake:</span> <strong>${(totalWeight*0.03).toFixed(2)} kg</strong></li>
+                                    </ul>
+                                </div>
+                                <div class="col-md-6">
+                                    <h6 class="text-secondary">DLS Standard Concentrate Mix Recipe (scaled)</h6>
+                                    <ul class="list-group list-group-flush small">
+                                        <li class="list-group-item d-flex justify-content-between"><span>Crushed Maize/Wheat (30%):</span> <strong>${(requiredConcentrate*0.3).toFixed(2)} kg</strong></li>
+                                        <li class="list-group-item d-flex justify-content-between"><span>Rice Bran (30%):</span> <strong>${(requiredConcentrate*0.3).toFixed(2)} kg</strong></li>
+                                        <li class="list-group-item d-flex justify-content-between"><span>Wheat Bran (20%):</span> <strong>${(requiredConcentrate*0.2).toFixed(2)} kg</strong></li>
+                                        <li class="list-group-item d-flex justify-content-between"><span>Oil Cake (15%):</span> <strong>${(requiredConcentrate*0.15).toFixed(2)} kg</strong></li>
+                                        <li class="list-group-item d-flex justify-content-between"><span>Oyster Shell (2%):</span> <strong>${(requiredConcentrate*0.02).toFixed(2)} kg</strong></li>
+                                        <li class="list-group-item d-flex justify-content-between"><span>Salt (3%):</span> <strong>${(requiredConcentrate*0.03).toFixed(2)} kg</strong></li>
+                                    </ul>
+                                </div>
+                            </div>
+                            ` : feedShedId ? '<p class="text-muted text-center py-2 mb-0">No active animal stock found in the selected shed allocation.</p>' : ''}
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-4">
+                        <div class="card p-4 shadow-sm border h-100">
+                            <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-capsules me-2"></i>Vaccine Stock Inventory</h5>
+                            <form onsubmit="addStock(event)" class="row g-2 mb-3">
+                                <div class="col-md-3">
+                                    <select name="vaccine_id" class="form-select form-select-sm" required>
+                                        <option value="">Select Vaccine</option>
+                                        ${vaccines.map(v => `<option value="${v.id}">${e(v.name)}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="col-md-3"><input name="batch_number" class="form-control form-control-sm" placeholder="Batch No" required></div>
+                                <div class="col-md-2"><input type="number" name="quantity" class="form-control form-control-sm" placeholder="Qty" required></div>
+                                <div class="col-md-3"><input type="date" name="expiry_date" class="form-control form-control-sm" value="${today()}" required></div>
+                                <div class="col-md-1"><button class="btn btn-sm btn-primary w-100"><i class="bi bi-plus"></i></button></div>
+                            </form>
+
+                            <div class="table-responsive">
+                                <table class="table table-sm table-hover align-middle mb-0">
+                                    <thead><tr><th>Vaccine</th><th>Batch</th><th>Stock Qty</th><th>Expiry Date</th></tr></thead>
+                                    <tbody>
+                                        ${stocks.length === 0 ? '<tr><td colspan="4" class="text-center text-muted">No vaccine stock recorded.</td></tr>' :
+                                            stocks.map(s => {
+                                                const isExpired = s.expiry_date && new Date(s.expiry_date) <= new Date(Date.now()+30*24*60*60*1000);
+                                                return `<tr class="${isExpired?'table-warning':''}">
+                                                    <td>${e(vaccineMap[s.vaccine_id]||'Unknown')}</td>
+                                                    <td><strong>${e(s.batch_number||'N/A')}</strong></td>
+                                                    <td>${e(s.stock_quantity||0)} doses</td>
+                                                    <td>${e(s.expiry_date)} ${isExpired ? ' <span class="badge bg-danger">Near Expiry</span>' : ''}</td>
+                                                </tr>`;
+                                            }).join('')
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-md-6 mb-4">
+                        <div class="card p-4 shadow-sm border h-100">
+                            <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-basket3 me-2"></i>Feed Consumption Tracker</h5>
+                            <form onsubmit="logFeed(event)" class="row g-2 mb-3">
+                                <div class="col-md-3">
+                                    <select name="shed_id" class="form-select form-select-sm" required>
+                                        <option value="">Select Shed</option>
+                                        ${sheds.map(s => `<option value="${s.id}">${e(s.name)}</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="col-md-3">
+                                    <select name="feed_type" class="form-select form-select-sm" required>
+                                        <option value="">Feed Type</option>
+                                        <option value="Green Grass">Green Grass</option>
+                                        <option value="Concentrate Mix">Concentrate Mix</option>
+                                        <option value="UMS">UMS</option>
+                                    </select>
+                                </div>
+                                <div class="col-md-2"><input type="number" step="0.1" name="quantity_kg" class="form-control form-control-sm" placeholder="Kg" required></div>
+                                <div class="col-md-3"><input type="date" name="record_date" class="form-control form-control-sm" value="${today()}" required></div>
+                                <div class="col-md-1"><button class="btn btn-sm btn-success w-100"><i class="bi bi-plus"></i></button></div>
+                            </form>
+
+                            <div class="table-responsive" style="max-height:200px;overflow-y:auto;">
+                                <table class="table table-sm table-hover align-middle mb-0">
+                                    <thead><tr><th>Date</th><th>Shed</th><th>Feed Type</th><th>Qty Used</th></tr></thead>
+                                    <tbody>
+                                        ${sortedFeed.length === 0 ? '<tr><td colspan="4" class="text-center text-muted">No feed records found.</td></tr>' :
+                                            sortedFeed.map(f => `<tr>
+                                                <td>${e(f.record_date)}</td>
+                                                <td>${e(shedMap[f.shed_id]||'Global')}</td>
+                                                <td>${e(f.feed_type)}</td>
+                                                <td>${e(f.quantity_kg)} kg</td>
+                                            </tr>`).join('')
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function addStock(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const vaccine_id = parseInt(data.get('vaccine_id'));
+            const batch = data.get('batch_number') || '';
+            const qty = parseInt(data.get('quantity')) || 0;
+            const expiry = data.get('expiry_date') || today();
+            if (qty > 0) {
+                await dbAdd('vaccine_stock', { vaccine_id, batch_number: batch, stock_quantity: qty, expiry_date: expiry });
+                showAlert('Vaccine stock levels registered successfully.');
+                form.reset();
+                renderInventory();
+            }
+        }
+
+        async function logFeed(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const shed_id = data.get('shed_id') ? parseInt(data.get('shed_id')) : null;
+            const feed_type = data.get('feed_type') || '';
+            const qty = parseFloat(data.get('quantity_kg')) || 0;
+            const record_date = data.get('record_date') || today();
+
+            // UMS check
+            if (feed_type === 'UMS' && shed_id) {
+                const animals = await dbGetAllByIndex('animals', 'shed_id', shed_id);
+                const kids = animals.filter(a => a.status === 'Active' && getAgeMonths(a.dob) < 6);
+                if (kids.length > 0) {
+                    showAlert('Diet Error: UMS cannot be allocated to sheds containing kids under 6 months.', 'danger');
+                    return;
+                }
+            }
+            if (qty > 0 && feed_type) {
+                await dbAdd('feed_consumption', { shed_id, feed_type, quantity_kg: qty, record_date, notes: '' });
+                showAlert('Feed consumption logged successfully.');
+                form.reset();
+                renderInventory();
+            }
+        }
+
+        // ---- TASKS ----
+        async function renderTasks(params) {
+            const container = document.getElementById('tasksContent');
+            const users = await dbGetAll('users');
+            const userMap = {};
+            users.forEach(u => userMap[u.id] = u.username);
+
+            let tasks = await dbGetAll('employee_tasks');
+            if (currentUser.role === 'worker') {
+                tasks = tasks.filter(t => t.assigned_to_id === currentUser.id);
+            }
+            const sorted = tasks.sort((a, b) => {
+                if (a.status === 'Pending' && b.status === 'Completed') return -1;
+                if (a.status === 'Completed' && b.status === 'Pending') return 1;
+                return new Date(a.due_date) - new Date(b.due_date);
+            });
+
+            container.innerHTML = `
+                <div class="row">
+                    ${currentUser.role !== 'worker' ? `
+                    <div class="col-md-4 mb-4">
+                        <div class="card p-4 shadow-sm border">
+                            <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-clipboard-plus me-2"></i>Assign Farm Chore</h5>
+                            <form onsubmit="addTask(event)">
+                                <div class="mb-2">
+                                    <label class="form-label small">Task Summary</label>
+                                    <input name="task_title" class="form-control form-control-sm" required placeholder="e.g. Sanitize Pen C">
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small">Assign Worker</label>
+                                    <select name="assigned_to_id" class="form-select form-select-sm" required>
+                                        ${users.map(u => `<option value="${u.id}">${e(u.username)} (${e(u.role)})</option>`).join('')}
+                                    </select>
+                                </div>
+                                <div class="mb-2">
+                                    <label class="form-label small">Due Target Date</label>
+                                    <input type="date" name="due_date" class="form-control form-control-sm" value="${today()}" required>
+                                </div>
+                                <div class="mb-3">
+                                    <label class="form-label small">Additional Instructions</label>
+                                    <textarea name="task_description" class="form-control form-control-sm" rows="2"></textarea>
+                                </div>
+                                <button class="btn btn-primary btn-sm w-100">Deploy Assignment</button>
+                            </form>
+                        </div>
+                    </div>
+                    <div class="col-md-8">
+                    ` : `
+                    <div class="col-md-12">
+                    `}
+                        <div class="card p-4 shadow-sm border h-100">
+                            <h5 class="mb-3 border-bottom pb-2"><i class="bi bi-kanban me-2"></i>Active Daily Chores Tracker</h5>
+                            <div class="table-responsive">
+                                <table class="table table-hover align-middle">
+                                    <thead class="table-dark">
+                                        <tr><th>Task</th><th>Assigned To</th><th>Due Date</th><th>Status</th><th>Operation</th></tr>
+                                    </thead>
+                                    <tbody>
+                                        ${sorted.length === 0 ? '<tr><td colspan="5" class="text-center text-muted">No chores allocated for current filters.</td></tr>' :
+                                            sorted.map(t => {
+                                                const canComplete = currentUser.role !== 'worker' || t.assigned_to_id === currentUser.id;
+                                                return `<tr>
+                                                    <td><strong>${e(t.task_title)}</strong>${t.task_description ? `<br><small class="text-muted">${e(t.task_description)}</small>` : ''}</td>
+                                                    <td><span class="badge bg-secondary">${e(userMap[t.assigned_to_id]||'N/A')}</span></td>
+                                                    <td>${e(t.due_date)}</td>
+                                                    <td><span class="badge bg-${t.status==='Completed'?'success':'warning'}">${e(t.status)}</span></td>
+                                                    <td>${t.status === 'Pending' && canComplete ? `<button class="btn btn-sm btn-success py-1 px-2" onclick="completeTask(${t.id})"><i class="bi bi-check-lg"></i> Complete</button>` : t.status === 'Completed' ? `<small class="text-muted">Done at ${e(t.completed_at||'')}</small>` : ''}</td>
+                                                </tr>`;
+                                            }).join('')
+                                        }
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function addTask(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const assigned_to = parseInt(data.get('assigned_to_id'));
+            const title = data.get('task_title') || '';
+            const description = data.get('task_description') || '';
+            const due_date = data.get('due_date') || today();
+            if (title) {
+                await dbAdd('employee_tasks', { assigned_to_id: assigned_to, task_title: title,
+                    task_description: description, due_date, status: 'Pending', completed_at: null });
+                showAlert('Chore deployed successfully.');
+                form.reset();
+                renderTasks();
+            }
+        }
+
+        async function completeTask(id) {
+            const task = await dbGet('employee_tasks', id);
+            if (task) {
+                task.status = 'Completed';
+                task.completed_at = new Date().toISOString();
+                await dbPut('employee_tasks', task);
+                showAlert('Task updated successfully.');
+                renderTasks();
+            }
+        }
+
+        // ---- SCANNER ----
+        function renderScanner(params) {
+            const container = document.getElementById('scannerContent');
+            container.innerHTML = `
+                <div class="card p-4 shadow-sm border">
+                    <div class="text-center mb-4">
+                        <i class="bi bi-camera-fill fs-1 text-primary"></i>
+                        <h4 class="mt-2 text-uppercase fw-bold">Ear & Cage QR Scanner</h4>
+                        <p class="text-muted small">Align the printed animal QR code directly inside the target bounds below to access their dynamic administrative profile.</p>
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        <div id="qr-reader" class="border rounded bg-light" style="width:100%;max-width:480px;"></div>
+                    </div>
+                    <div class="text-center mt-3">
+                        <div id="qr-reader-results" class="text-success fw-bold"></div>
+                    </div>
+                </div>
+            `;
+            // Initialize scanner after render
+            setTimeout(() => initQRScanner(), 200);
+        }
+
+        function initQRScanner() {
+            if (qrScannerInstance) {
+                qrScannerInstance.clear().catch(() => {});
+                qrScannerInstance = null;
+            }
+            const element = document.getElementById('qr-reader');
+            if (!element) return;
+            try {
+                qrScannerInstance = new Html5QrcodeScanner(
+                    'qr-reader', { fps: 10, qrbox: { width: 250, height: 250 } }, false
+                );
+                qrScannerInstance.render(onQRScanSuccess, onQRScanFailure);
+            } catch (e) {
+                console.log('QR Scanner init error:', e);
+            }
+        }
+
+        function onQRScanSuccess(decodedText) {
+            if (qrScannerInstance) {
+                qrScannerInstance.clear().catch(() => {});
+                qrScannerInstance = null;
+            }
+            document.getElementById('qr-reader-results').innerText = 'Redirecting to Profile...';
+            // Try to extract ID from URL
+            const match = decodedText.match(/id=(\d+)/);
+            if (match) {
+                const id = parseInt(match[1]);
+                viewAnimal(id);
+            } else {
+                alert('Scanned Output: ' + decodedText);
+                // Re-init scanner
+                setTimeout(() => initQRScanner(), 1000);
+            }
+        }
+
+        function onQRScanFailure(error) {
+            // Silent
+        }
+
+        // ---- USERS ----
+        async function renderUsers(params) {
+            if (currentUser.role !== 'admin') {
+                document.getElementById('usersContent').innerHTML =
+                    `<div class="alert alert-danger">Administrative credentials required.</div>`;
+                return;
+            }
+            const container = document.getElementById('usersContent');
+            const users = await dbGetAll('users');
+
+            container.innerHTML = `
+                <h4 class="mb-3">System Identity and Authentication Log</h4>
+                <div class="card p-3 shadow-sm mb-4">
+                    <h6>Deploy Access Key Credentials</h6>
+                    <form onsubmit="addUser(event)" class="row g-3 align-items-end">
+                        <div class="col-md-3">
+                            <label class="form-label small">Username</label>
+                            <input name="username" class="form-control" placeholder="Target Alias" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">Password Key</label>
+                            <input type="password" name="password" class="form-control" placeholder="Password" required>
+                        </div>
+                        <div class="col-md-3">
+                            <label class="form-label small">RBAC Allocation Role</label>
+                            <select name="role" class="form-select">
+                                <option value="worker">worker</option>
+                                <option value="manager">manager</option>
+                                <option value="admin">admin</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <button class="btn btn-primary w-100"><i class="bi bi-person-plus"></i> Deploy</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="table-responsive bg-white rounded shadow-sm p-3">
+                    <table class="table table-hover align-middle">
+                        <thead class="table-dark">
+                            <tr><th>Identifier Profile</th><th>Allocated Role</th><th>Created On</th><th>Operations Action</th></tr>
+                        </thead>
+                        <tbody>
+                            ${users.map(u => `
+                                <tr>
+                                    <td>${e(u.username)}</td>
+                                    <td><span class="badge bg-secondary">${e(u.role)}</span></td>
+                                    <td>${e(u.created_at||'')}</td>
+                                    <td>${u.id !== currentUser.id ? `<button class="btn btn-sm btn-danger" onclick="deleteUser(${u.id})"><i class="bi bi-trash"></i> Revoke</button>` : '<span class="small text-muted">Active credential</span>'}</td>
+                                </tr>
+                            `).join('')}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        async function addUser(e) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const username = data.get('username');
+            const password = data.get('password');
+            const role = data.get('role') || 'worker';
+            if (username && password) {
+                const existing = await dbGetByIndex('users', 'username', username);
+                if (existing) {
+                    showAlert('User already exists.', 'danger');
+                    return;
+                }
+                await dbAdd('users', { username, password, role, created_at: new Date().toISOString() });
+                showAlert('Credentials deployed successfully.');
+                form.reset();
+                renderUsers();
+            }
+        }
+
+        async function deleteUser(id) {
+            if (!confirm('Revoke credential accesses permanently?')) return;
+            await dbDelete('users', id);
+            showAlert('Target cleared from logs.');
+            renderUsers();
+        }
+
+        // ---- WEIGHT MODAL ----
+        function showWeightModal(animalId) {
+            const container = document.getElementById('weightModalBody');
+            container.innerHTML = `
+                <form onsubmit="logWeight(event, ${animalId})">
+                    <div class="mb-2"><label class="form-label small">Weight (kg)</label><input type="number" step="0.01" name="weight" class="form-control" required></div>
+                    <div class="mb-2"><label class="form-label small">Date</label><input type="date" name="record_date" class="form-control" value="${today()}" required></div>
+                    <div class="mb-2"><label class="form-label small">Notes</label><input name="notes" class="form-control"></div>
+                    <button class="btn btn-primary w-100">Save</button>
+                </form>
+            `;
+            const modal = new bootstrap.Modal(document.getElementById('weightModal'));
+            modal.show();
+        }
+
+        async function logWeight(e, animalId) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const weight = parseFloat(data.get('weight')) || 0;
+            const record_date = data.get('record_date') || today();
+            const notes = data.get('notes') || '';
+            if (weight > 0) {
+                await dbAdd('weight_records', { animal_id: animalId, weight, record_date, notes });
+                // Update animal weight
+                const an = await dbGet('animals', animalId);
+                if (an) {
+                    an.weight = weight;
+                    await dbPut('animals', an);
+                }
+                showAlert('Weight record added successfully.');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('weightModal'));
+                if (modal) modal.hide();
+                viewAnimal(animalId);
+            }
+        }
+
+        // ---- PROFILE COST MODAL ----
+        function showProfileCostModal(animalId) {
+            const container = document.getElementById('profileCostModalBody');
+            container.innerHTML = `
+                <form onsubmit="logProfileCost(event, ${animalId})">
+                    <div class="mb-2"><label class="form-label small">Category</label>
+                        <select name="category" class="form-select">
+                            <option value="Feed">Feed</option><option value="Medicine">Medicine</option>
+                            <option value="Vaccine">Vaccine</option><option value="Labor">Labor</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="mb-2"><label class="form-label small">Amount ($)</label><input type="number" step="0.01" name="amount" class="form-control" required></div>
+                    <div class="mb-2"><label class="form-label small">Date</label><input type="date" name="cost_date" class="form-control" value="${today()}" required></div>
+                    <div class="mb-3"><label class="form-label small">Note</label><input name="note" class="form-control" required></div>
+                    <button class="btn btn-primary w-100">Save</button>
+                </form>
+            `;
+            const modal = new bootstrap.Modal(document.getElementById('profileCostModal'));
+            modal.show();
+        }
+
+        async function logProfileCost(e, animalId) {
+            e.preventDefault();
+            const form = e.target;
+            const data = new FormData(form);
+            const category = data.get('category') || 'Other';
+            const amount = parseFloat(data.get('amount')) || 0;
+            const cost_date = data.get('cost_date') || today();
+            const note = data.get('note') || '';
+            if (amount > 0) {
+                await dbAdd('animal_costs', { animal_id: animalId, category, amount, cost_date, note });
+                await dbAdd('transactions', { animal_id: animalId, type: 'Expense', category, amount, trans_date: cost_date,
+                    description: 'Profile Log: ' + note });
+                showAlert('Cost entry logged successfully.');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('profileCostModal'));
+                if (modal) modal.hide();
+                viewAnimal(animalId);
+            }
+        }
+
+        // ---- AUTOMATION ----
+        async function runAutomation() {
+            // 1. Mark overdue vaccinations
+            const records = await dbGetAll('vaccination_records');
+            for (const r of records) {
+                if (r.status === 'Pending' && r.due_date && r.due_date < today()) {
+                    r.status = 'Overdue';
+                    await dbPut('vaccination_records', r);
+                    // Update animal
+                    const an = await dbGet('animals', r.animal_id);
+                    if (an) {
+                        an.vaccination_status = 'Overdue';
+                        await dbPut('animals', an);
+                    }
+                }
+            }
+
+            // 2. Schedule vaccines based on age
+            const animals = await dbGetAll('animals');
+            const vaccines = await dbGetAll('vaccines');
+            for (const a of animals) {
+                if (a.status !== 'Active' || !a.dob) continue;
+                const ageMonths = getAgeMonths(a.dob);
+                for (const v of vaccines) {
+                    let dueDate = null;
+                    if (v.name.toLowerCase().includes('cdt')) {
+                        const ageDays = Math.floor((new Date() - new Date(a.dob)) / (1000 * 60 * 60 * 24));
+                        if (ageDays >= 3 && ageDays <= 16) dueDate = addDays(a.dob, 3);
+                        else if (ageDays >= 17 && ageDays <= 89) dueDate = addDays(a.dob, 17);
+                        else if (ageDays >= 90) dueDate = addDays(a.dob, 90);
+                    } else {
+                        if (ageMonths >= v.recommended_age_months) {
+                            dueDate = addDays(a.dob, v.recommended_age_months * 30);
+                        }
+                    }
+                    if (dueDate) {
+                        const existing = await dbGetAllByIndex('vaccination_records', 'animal_id', a.id);
+                        const found = existing.some(r => r.vaccine_id === v.id && r.due_date === dueDate);
+                        if (!found) {
+                            await dbAdd('vaccination_records', { animal_id: a.id, vaccine_id: v.id, due_date: dueDate,
+                                status: 'Pending', given_date: null });
+                        }
+                    }
+                }
+            }
+
+            // 3. Seasonal deworming alerts
+            const month = new Date().getMonth() + 1;
+            if ([5, 6, 10, 11].includes(month)) {
+                const msg = "Seasonal Herd Deworming Alert: DLS rules recommend concurrent herd-wide deworming administration.";
+                const alerts = await dbGetAll('alerts');
+                const exists = alerts.some(a => a.message === msg && !a.is_read);
+                if (!exists) {
+                    await dbAdd('alerts', { animal_id: null, message: msg, type: 'Deworming Alert', is_read: 0,
+                        created_at: new Date().toISOString() });
+                }
+            }
+        }
+
+        // ---- SIDEBAR TOGGLE ----
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const overlay = document.querySelector('.sidebar-overlay');
+            sidebar.classList.toggle('show');
+            if (overlay) overlay.classList.toggle('active');
+        }
+
+        // ---- INIT ----
+        document.addEventListener('DOMContentLoaded', function() {
+            // Dark mode
+            const themeToggle = document.getElementById('darkModeToggle');
+            const html = document.documentElement;
+            const savedTheme = localStorage.getItem('goat-theme') || 'light';
+            html.setAttribute('data-bs-theme', savedTheme);
+            themeToggle.checked = savedTheme === 'dark';
+            themeToggle.addEventListener('change', function() {
+                const theme = this.checked ? 'dark' : 'light';
+                html.setAttribute('data-bs-theme', theme);
+                localStorage.setItem('goat-theme', theme);
+            });
+
+            // Network status
+            function updateNetwork() {
+                const dot = document.getElementById('networkDot');
+                const text = document.getElementById('networkText');
+                if (navigator.onLine) {
+                    dot.className = 'bi bi-circle-fill text-success';
+                    text.textContent = 'Online';
+                } else {
+                    dot.className = 'bi bi-circle-fill text-danger';
+                    text.textContent = 'Offline';
+                }
+            }
+            window.addEventListener('online', updateNetwork);
+            window.addEventListener('offline', updateNetwork);
+            updateNetwork();
+
+            // Sidebar clicks
+            document.querySelectorAll('#sidebarNav .nav-link').forEach(el => {
+                el.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const page = this.dataset.page;
+                    if (page) navigateTo(page);
+                });
+            });
+
+            // Open DB and start
+            openDB().then(() => {
+                // Seed default data if empty
+                return seedDatabase();
+            }).then(() => {
+                if (checkAuth()) {
+                    navigateTo('dashboard');
+                } else {
+                    showLogin();
+                }
+                // Run automation
+                runAutomation();
+                // Auto-refresh every 5 min
+                setInterval(() => {
+                    if (checkAuth() && currentPage) {
+                        renderPage(currentPage);
+                    }
+                }, 300000);
+            }).catch(err => {
+                console.error('DB init error:', err);
+                document.querySelector('.main-content').innerHTML =
+                    `<div class="alert alert-danger m-4">Database initialization failed: ${err.message}</div>`;
+            });
+        });
+
+        // ---- SEED DATABASE ----
+        async function seedDatabase() {
+            // Check if users exist
+            const users = await dbGetAll('users');
+            if (users.length === 0) {
+                await dbAdd('users', { username: 'admin', password: 'password', role: 'admin',
+                    created_at: new Date().toISOString() });
+                await dbAdd('users', { username: 'manager', password: 'password', role: 'manager',
+                    created_at: new Date().toISOString() });
+                await dbAdd('users', { username: 'worker', password: 'password', role: 'worker',
+                    created_at: new Date().toISOString() });
+            }
+
+            // Check sheds
+            const sheds = await dbGetAll('sheds');
+            if (sheds.length === 0) {
+                await dbAdd('sheds', { name: 'Shed A', location: 'North Wing' });
+                await dbAdd('sheds', { name: 'Shed B', location: 'South Wing' });
+                await dbAdd('sheds', { name: 'Shed C', location: 'East Wing' });
+            }
+
+            // Check vaccines
+            const vaccines = await dbGetAll('vaccines');
+            if (vaccines.length === 0) {
+                await dbAdd('vaccines', { name: 'CDT Vaccine', recommended_age_months: 3, repeat_months: 12 });
+                await dbAdd('vaccines', { name: 'PPR Vaccine', recommended_age_months: 6, repeat_months: 12 });
+                await dbAdd('vaccines', { name: 'Foot Rot Vaccine', recommended_age_months: 12, repeat_months: 6 });
+            }
+        }
+
+        // ---- GLOBAL EXPOSURE FOR ONCLICK ----
+        window.navigateTo = navigateTo;
+        window.viewAnimal = viewAnimal;
+        window.editAnimal = editAnimal;
+        window.showAnimalForm = showAnimalForm;
+        window.saveAnimal = saveAnimal;
+        window.deleteAnimal = deleteAnimal;
+        window.logActivity = logActivity;
+        window.logMilk = logMilk;
+        window.showBulkModal = showBulkModal;
+        window.bulkOperation = bulkOperation;
+        window.toggleActivityFields = toggleActivityFields;
+        window.generateKidFields = generateKidFields;
+        window.showTransModal = showTransModal;
+        window.addTransaction = addTransaction;
+        window.addVaccineRule = addVaccineRule;
+        window.showSchedModal = showSchedModal;
+        window.scheduleVaccination = scheduleVaccination;
+        window.completeVaccination = completeVaccination;
+        window.exportCSV = exportCSV;
+        window.addStock = addStock;
+        window.logFeed = logFeed;
+        window.addTask = addTask;
+        window.completeTask = completeTask;
+        window.showWeightModal = showWeightModal;
+        window.logWeight = logWeight;
+        window.showProfileCostModal = showProfileCostModal;
+        window.logProfileCost = logProfileCost;
+        window.addUser = addUser;
+        window.deleteUser = deleteUser;
+        window.handleLogin = handleLogin;
+        window.logout = logout;
+        window.toggleSidebar = toggleSidebar;
+        window.applyAnimalFilters = applyAnimalFilters;
+        window.clearAnimalFilters = clearAnimalFilters;
+        window.applyFilters = applyFilters;
+        window.clearFilters = clearFilters;
+        window.onQRScanSuccess = onQRScanSuccess;
+        window.onQRScanFailure = onQRScanFailure;
+        window.initQRScanner = initQRScanner;
+    </script>
+
+</body>
+</html>
